@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vista bodeguero</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js" integrity="sha384-k6d4wzSIapyDyv1kpU366/PK5hCdSbCRGRCMv+eplOQJWyd1fbcAu9OCUj5zNLiq" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cal+Sans&display=swap" rel="stylesheet">
+</head>
+
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark gradient-navbar">
+    <div class="container-fluid p-0">
+      <a href="index.html" class="navbar-brand d-flex align-items-center me-3">
+        <img src="img/Logo-ferremas-sinfondo.png" alt="Logo Ferremas" class="img_logo">
+        <h3 class="title_ferremas mb-0 ms-2">Ferremas</h3>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+              data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+              aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
+        <ul class="navbar-nav mb-2 mb-lg-0 d-flex align-items-center">
+          <li class="nav-item"><a class="nav-link" href="#">Inicio</a></li>
+          <li class="nav-item"><a class="nav-link" href="#">Ordenes</a></li>
+          <li class="nav-item"><a class="nav-link" href="#">Despacho</a></li>
+        </ul>
+        <img src="img/carrito.png" alt="carrito" class="carrito-img">
+        <form class="d-flex" role="search">
+          <input class="search" type="search" placeholder="Buscar" aria-label="Search">
+          <button class="btn-search" type="submit">Buscar</button>
+        </form>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container mt-5">
+    <h2>Vista bodeguero</h2>
+
+    <div class="row">
+      <div class="col-md-12">
+        <h3>Órdenes de pedidos</h3>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>ID pedido</th>
+              <th>Cliente</th>
+              <th>Producto</th>
+              <th>Cantidad</th>
+              <th>Estado</th>
+              <th>Acción</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>#1234</td>
+              <td>Juan Pérez</td>
+              <td>Martillo</td>
+              <td>2</td>
+              <td><span class="badge bg-warning">Pendiente</span></td>
+              <td>
+                <button class="btn btn-success" onclick="aceptarPedido(1234)">Aceptar</button>
+                <button class="btn btn-danger" onclick="rechazarPedido(1234)">Rechazar</button>
+              </td>
+            </tr>
+            <tr>
+              <td>#5678</td>
+              <td>Maria López</td>
+              <td>Taladro</td>
+              <td>1</td>
+              <td><span class="badge bg-success">Aceptado</span></td>
+              <td>
+                <button class="btn btn-primary" onclick="entregarPedido(5678)">Entregar</button>
+              </td>
+            </tr>
+            <tr>
+              <td>#9876</td>
+              <td>Carlos Gómez</td>
+              <td>Clavos</td>
+              <td>5</td>
+              <td><span class="badge bg-danger">Rechazado</span></td>
+              <td><button class="btn btn-primary" disabled>Entregado</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function aceptarPedido(id) {
+      alert('Pedido ' + id + ' aceptado. Preparando...');
+    }
+
+    function rechazarPedido(id) {
+      alert('Pedido ' + id + ' rechazado.');
+    }
+
+    function entregarPedido(id) {
+      alert('Pedido ' + id + ' entregado al vendedor para despacho.');
+    }
+  </script>
+
+  <script src="script.js"></script>
+</body>
+</html>
