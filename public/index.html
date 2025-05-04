@@ -54,6 +54,12 @@
         </form>
       </div>
     </div>
+    <button onclick="cerrarSesion()">Cerrar sesión</button>
+<script>
+  function cerrarSesion() {
+    fetch('/logout').then(() => window.location.href = '/login.html');
+  }
+</script>
   </nav>
 
   <div id="productos" class="product-grid">
