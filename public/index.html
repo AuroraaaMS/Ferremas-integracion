@@ -31,68 +31,25 @@
               aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
+      <h5 id="nombreusuario" ></h5>
       <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
         <ul class="navbar-nav mb-2 mb-lg-0 d-flex align-items-center">
           <li class="nav-item"><a class="nav-link" href="#quienes-somos">Quiénes somos</a></li>
           <li class="nav-item"><a class="nav-link" href="#productos">Nuestros productos</a></li>
           <li class="nav-item"><a class="nav-link" href="carrito.html">Carrito</a></li>
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              Inicia sesión
-            </a>
-            <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="login.html?rol=cliente">Cliente</a></li>
-              <li><a class="dropdown-item" href="login.html?rol=vendedor">Vendedor</a></li>
-              <li><a class="dropdown-item" href="login.html?rol=bodeguero">Bodeguero</a></li>
-              <li><a class="dropdown-item" href="login.html?rol=administrador">Administrador</a></li>
-              <li><a class="dropdown-item" href="login.html?rol=contador">Contador</a></li>
-            </ul>
-          </li>          
+                 
         <form class="d-flex" role="search">
           <input class="search" type="search" placeholder="¿Qué producto buscas?" aria-label="Search">
           <button class="btn-search" type="submit">Buscar</button>
         </form>
       </div>
+      <button onclick="cerrarSesion()"  class="btn-search" >Cerrar sesión</button>
     </div>
-    <button onclick="cerrarSesion()">Cerrar sesión</button>
-<script>
-  function cerrarSesion() {
-    fetch('/logout').then(() => window.location.href = '/login.html');
-  }
-</script>
+    
   </nav>
 
   <div id="productos" class="product-grid">
-    <div class="product-item">
-      <img src="img/pala.png" alt="Producto 1">
-      <h3>Pala</h3>
-      <p>Agarrini la palini</p>
-      <span>$10</span>
-      <button onclick="addToCart('Llave inglesa', 10)">Agregar al carrito</button>
-    </div>
-    
-    <div class="product-item">
-      <img src="img/martillo.png" alt="Producto 2">
-      <h3>Martillo</h3>
-      <p>Descripción breve del producto</p>
-      <span>$20</span>
-      <button onclick="addToCart('Martillo', 20)">Agregar al carrito</button>
-    </div>
-  
-    <div class="product-item">
-      <img src="img/clavos.png" alt="Producto 3">
-      <h3>Clavos</h3>
-      <p>Descripción breve del producto</p>
-      <span>$20</span>
-      <button onclick="addToCart('Clavos', 20)">Agregar al carrito</button>
-    </div>    
-    <div class="product-item">
-      <img src="img/taladro.jpg" alt="Producto 3">
-      <h3>Taladro</h3>
-      <p>Descripción breve del producto</p>
-      <span>$20</span>
-      <button onclick="addToCart('Clavos', 20)">Agregar al carrito</button>
-    </div>
+
   </div>  
 
   <div id="quienes-somos" class="texto">
@@ -105,8 +62,7 @@
   <div id="loading">
     <img src="/img/tuercas.gif" alt="Cargando...">
 </div>
-
-  <script src="/js/script.js"></script>
+  <script src="/js/index.js"></script>
 </body>
 </html>
 

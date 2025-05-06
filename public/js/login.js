@@ -3,8 +3,10 @@ function iniciarSesion(event) {
   
     const correo = document.getElementById('correo').value;
     const pass = document.getElementById('pass').value;
+    const rol = Number(document.getElementById('tipo-usuario').value);
+
   
-    const data = { correo, pass };
+    const data = { correo, pass , rol };
   
     fetch('/api/login', {
       method: 'POST',
