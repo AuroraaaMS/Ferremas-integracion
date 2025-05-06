@@ -33,7 +33,7 @@ function iniciarSesion(event) {
   }
   
   const swiper = new Swiper(".mySwiper", {
-    direction: "horizontal",
+    direction: "vertical",
     loop: true,
     speed: 1000,
     autoplay: {
