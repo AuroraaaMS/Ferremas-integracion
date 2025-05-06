@@ -135,3 +135,31 @@ VALUES
 ('María Soto', 'abcd', '87654321-0', 'maria@example.com', 2),
 ('Pedro Rojas', 'pass123', '11222333-4', 'pedro@example.com', 1),
 ('Ana Torres', 'secure456', '99887766-5', 'ana@example.com', 3);
+
+
+
+
+INSERT INTO Categoria (nombre_categoria)
+VALUES 
+('Herramientas Eléctricas'),
+('Materiales de Construcción'),
+('Pinturas y Adhesivos'),
+('Fontanería'),
+('Electricidad'),
+('Ferretería General');
+
+
+INSERT INTO Producto (Nombre, descripcion, marca, precio, id_categoria)
+VALUES
+('Taladro Percutor 600W', 'Taladro percutor eléctrico para concreto y madera', 'Bosch', 54990, 1),
+('Sierra Circular 7"', 'Sierra eléctrica de alto rendimiento', 'Makita', 89990, 1),
+('Cemento Portland 25kg', 'Saco de cemento de alta resistencia', 'Melón', 5990, 2),
+('Plancha OSB 11mm', 'Plancha estructural para techos y paredes', 'Arauco', 13990, 2),
+('Pintura Látex Interior 1 galón', 'Pintura blanca para muros interiores', 'Sipa', 12990, 3),
+('Silicona Transparente 280ml', 'Sellador de alta adherencia', 'Pattex', 2990, 3),
+('Codo PVC 90° 50mm', 'Codo para instalaciones de agua potable', 'Tigre', 890, 4),
+('Llave monomando lavaplatos', 'Grifería cromada para cocina', 'Stretto', 23990, 4),
+('Interruptor doble blanco', 'Interruptor para instalación eléctrica interior', 'BTicino', 1990, 5),
+('Cable eléctrico 2x1.5mm 100m', 'Cable de cobre forrado, uso residencial', 'Cademsa', 34990, 5),
+('Martillo carpintero 16oz', 'Martillo de acero con mango de goma', 'Truper', 4990, 6),
+('Destornillador Phillips mediano', 'Destornillador punta cruz', 'Pretul', 1990, 6);
