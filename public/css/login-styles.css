@@ -77,13 +77,13 @@
     background-color: rgb(112, 139, 211);
     opacity: 50%;
     border: none;
-    width: 50%;
+    width: 60%;
     margin-left: 15%;
   }
 
   .form-select{
     background-color: rgb(112, 139, 211);
-    width: 50%;
+    width: 60%;
     border: none;
     align-items: center;
     margin-left: 15%;

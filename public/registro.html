@@ -1,91 +1,68 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registro cliente</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js" integrity="sha384-k6d4wzSIapyDyv1kpU366/PK5hCdSbCRGRCMv+eplOQJWyd1fbcAu9OCUj5zNLiq" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="/css/registro-styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Cal+Sans&display=swap" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Registro cliente</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"></script>
+  <link rel="stylesheet" href="/css/registro-styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Cal+Sans&display=swap" rel="stylesheet">
 </head>
 <body>
-  <nav class="navbar navbar-expand-lg navbar-dark gradient-navbar">
-    <div class="container-fluid p-0">
-      <a href="index.html" class="navbar-brand d-flex align-items-center me-3">
-        <img src="img/Logo-ferremas-sinfondo.png" alt="Logo Ferremas" class="img_logo">
-        <h3 class="title_ferremas mb-0 ms-2">Ferremas</h3>
-      </a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-              data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
-              aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
-        <ul class="navbar-nav mb-2 mb-lg-0 d-flex align-items-center">
-          <li class="nav-item"><a class="nav-link" href="#">Inicio</a></li>
-          <li class="nav-item"><a class="nav-link" href="#">Catálogo</a></li>
-          <li class="nav-item"><a class="nav-link" href="#">Carrito</a></li>
-        </ul>
-        <img src="img/carrito.png" alt="carrito" class="carrito-img">
-      </div>
-    </div>
-  </nav>
 
   <div class="container mt-5">
-    <h2>Registro cliente</h2>
-    <form action="#" method="POST">
-      <div class="mb-3">
-        <label for="nombre" class="form-label">Nombre completo</label>
-        <input type="text" class="form-control" id="nombre" name="nombre" required>
-      </div>
-      
-      <div class="mb-3">
-        <label for="contraseña" class="form-label">Contraseña</label>
-        <input type="password" class="form-control" id="contraseña" name="contraseña" required>
+    <h2 class="title">Registro cliente</h2>
+    <form action="#" method="POST" class="formulario">
+      <div class="row mb-3 align-items-center">
+        <label for="nombre" class="col-12 col-md-3 col-form-label">Nombre completo</label>
+        <div class="col-12 col-md-6">
+          <input type="text" class="form-control" id="nombre" name="nombre" required>
+        </div>
       </div>
 
-      <div class="mb-3">
-        <label for="confirmar_contraseña" class="form-label">Confirmar contraseña</label>
-        <input type="password" class="form-control" id="confirmar_contraseña" name="confirmar_contraseña" required>
+      <div class="row mb-3 align-items-center">
+        <label for="contraseña" class="col-12 col-md-3 col-form-label">Contraseña</label>
+        <div class="col-12 col-md-6">
+          <input type="password" class="form-control" id="contraseña" name="contraseña" required>
+        </div>
       </div>
 
-      <label for="nombre" class="form-label">RUT</label>
-      <input type="text" class="form-control" id="nombre" name="nombre" required>
+      <div class="row mb-3 align-items-center">
+        <label for="confirmar_contraseña" class="col-12 col-md-3 col-form-label">Confirmar contraseña</label>
+        <div class="col-12 col-md-6">
+          <input type="password" class="form-control" id="confirmar_contraseña" name="confirmar_contraseña" required>
+        </div>
       </div>
 
-      <div>
-        <label for="correo" class="form-label">Correo electrónico</label>
-        <input type="email" class="form-control" id="correo" name="correo" required>
+      <div class="row mb-3 align-items-center">
+        <label for="rut" class="col-12 col-md-3 col-form-label">RUT</label>
+        <div class="col-12 col-md-6">
+          <input type="text" class="form-control" id="rut" name="rut" required>
+        </div>
       </div>
 
-      <div class=>
-        <input type="checkbox" class="form-check-input" id="terminos" required>
-        <label class="form-check-label" for="terminos">Acepto los términos y condiciones</label>
+      <div class="row mb-3 align-items-center">
+        <label for="correo" class="col-12 col-md-3 col-form-label">Correo electrónico</label>
+        <div class="col-12 col-md-6">
+          <input type="email" class="form-control" id="correo" name="correo" required>
+        </div>
       </div>
 
-      <div class="form-check form-check-inline">
-        <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-        <label class="form-check-label" for="inlineCheckbox1">1</label>
-      </div>
-      <div class="form-check form-check-inline">
-        <input class="form-check-input" type="checkbox" id="inlineCheckbox2" value="option2">
-        <label class="form-check-label" for="inlineCheckbox2">2</label>
-      </div>
-      <div class="form-check form-check-inline">
-        <input class="form-check-input" type="checkbox" id="inlineCheckbox3" value="option3">
-        <label class="form-check-label" for="inlineCheckbox3">3</label>
-      </div>
-      <div class="form-check form-check-inline">
-        <input class="form-check-input" type="checkbox" id="inlineCheckbox2" value="option4">
-        <label class="form-check-label" for="inlineCheckbox2">4</label>
-      </div>
-      <div class="form-check form-check-inline">
-        <input class="form-check-input" type="checkbox" id="inlineCheckbox3" value="option5">
-        <label class="form-check-label" for="inlineCheckbox3">5</label>
+      <div class="row mb-3">
+        <div class="col-12 col-md-9 offset-md-3">
+          <div class="form-check">
+            <input type="checkbox" class="form-check-input" id="terminos" required>
+            <label class="form-check-label" for="terminos">Acepto los términos y condiciones</label>
+          </div>
+        </div>
       </div>
 
-      <button type="submit" class="btn-r">Registrar</button>
+      <div class="row mb-3">
+        <div class="col-12 col-md-9 offset-md-3">
+          <button type="submit" class="btn-r">Registrar</button>
+        </div>
+      </div>
     </form>
   </div>
 

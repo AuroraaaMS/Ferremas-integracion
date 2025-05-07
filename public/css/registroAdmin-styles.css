@@ -1,52 +1,20 @@
-html, body {
-  height: 100%;
-  margin: 0;
-  padding: 0;
-}
-
 body {
   font-family: "Cal Sans", sans-serif;
   font-weight: 400;
   font-style: normal;
-  background-image: url(/img/Ferremas-wallpaper2.png);
+  background-image: url(/img/Ferremas-wallpaper.png);
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
-  background-attachment: fixed; 
-  color: rgb(255, 255, 255);
-  margin: 0;
-}
-
-form.formulario {
-  background-color: rgba(27, 30, 71, 0.5);
-  padding: 2rem;
-  border-radius: 1rem;
-  max-width: 700px;
-  margin: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.title {
-  text-align: center;
-  margin-bottom: 2rem;
-  color: white;
+  color: rgb(2, 2, 35);
 }
 
 .form-control {
-  background-color: rgba(121, 144, 208, 0.7);
+  background-color: rgb(112, 139, 211);
+  opacity: 0.5;
   border: none;
-  color: white;
-  border-radius: 0.375rem;
-  padding: 0.5rem 1rem;
-  width: 100%;
 }
 
-.col-form-label {
-  color: white;
-  font-weight: bold;
-}
 
 .btn-r {
   position: relative;
@@ -56,10 +24,9 @@ form.formulario {
   color: #ffffff;
   box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.2);
   border: none;
-  padding: 0.75rem 1.5rem;
+  padding: 1.5%;
   cursor: pointer;
-  width: 100%;
-  max-width: 7rem;
+  width: 7rem;
   height: 3rem;
   display: inline-block;
   text-align: center;
@@ -94,4 +61,17 @@ form.formulario {
   100% {
     left: 125%;
   }
+}
+
+.container {
+  display: flex;
+  flex-direction: column; 
+  align-items: center;    
+  justify-content: center; 
+  min-height: 100vh;       
+  padding-top: 0%;
+}
+
+.cargo{
+  font-size: small;
 }
