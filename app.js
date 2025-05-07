@@ -61,7 +61,6 @@ app.post('/api/login', (req, res) => {
     if (results.length > 0) {
       const usuario = results[0];
     
-      // Este console.log está bien
       console.log('Usuario encontrado:', usuario);
     
       req.session.usuario = {
@@ -81,8 +80,7 @@ app.post('/api/login', (req, res) => {
         case 5: redirectUrl = '/contador.html'; break;
         default: redirectUrl = '/login.html';
       }
-    
-      // ✅ Esta es la única respuesta válida que debe enviarse
+  
       res.status(200).json({ message: 'Inicio de sesión exitoso', redirect: redirectUrl });
     }
      else {
@@ -135,6 +133,56 @@ app.get('/api/productos', (req, res) => {
     res.status(200).json(results); 
   });
 });
+
+app.use(express.json());
+
+
+//Crear cliente y carrito 
+app.put('/api/cliente', (req, res) => {
+  const { nombre, pass, rut, correo } = req.body;
+  const rol_id = 1;  
+
+  connection.beginTransaction(err => {
+    if (err) {
+      return res.status(500).send('Error iniciando transacción');
+    }
+    const sqlUsuario = `
+      INSERT INTO Usuario (nombre, pass, rut, correo, Rol_id)
+      VALUES (?, ?, ?, ?, ?)
+    `;
+    connection.query(sqlUsuario, [nombre, pass, rut, correo, rol_id], (err, resultUsuario) => {
+      if (err) {
+        return connection.rollback(() => {
+          res.status(500).send('Error al insertar usuario');
+        });
+      }
+
+      const nuevoUsuarioId = resultUsuario.insertId;
+
+      const sqlCarrito = `
+        INSERT INTO Carrito (fecha_creacion, id_usuario)
+        VALUES (NOW(), ?)
+      `;
+      connection.query(sqlCarrito, [nuevoUsuarioId], (err) => {
+        if (err) {
+          return connection.rollback(() => {
+            res.status(500).send('Error al insertar carrito');
+          });
+        }
+        connection.commit(err => {
+          if (err) {
+            return connection.rollback(() => {
+              res.status(500).send('Error al confirmar transacción');
+            });
+          }
+          res.status(200).send('Cliente y carrito creados exitosamente');
+        });
+      });
+    });
+  });
+});
+
+
 
 
 
