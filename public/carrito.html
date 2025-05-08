@@ -24,6 +24,7 @@
               aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
+      <h5 id="nombreusuario" ></h5>
       <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
         <ul class="navbar-nav mb-2 mb-lg-0 d-flex align-items-center">
           <li class="nav-item"><a class="nav-link" href="#">Quiénes somos</a></li>
@@ -36,6 +37,7 @@
           <button class="btn-search" type="submit">Buscar</button>
         </form>
       </div>
+      <button onclick="cerrarSesion()"  class="btn-search" >Cerrar sesión</button>
     </div>
   </nav>
 
@@ -55,23 +57,17 @@
             </tr>
           </thead>
           <tbody>
-            <tr>
+            <!-- <tr>
               <td>Martillo</td>
               <td>1</td>
               <td>$20</td>
               <td>$20</td>
               <td><button class="btn btn-danger">Eliminar</button></td>
-            </tr>
-            <tr>
-              <td>Taladro</td>
-              <td>1</td>
-              <td>$30</td>
-              <td>$30</td>
-              <td><button class="btn btn-danger">Eliminar</button></td>
-            </tr>
+            </tr> -->
+    
           </tbody>
         </table>
-        <h4>Total: $50</h4>
+        <h4>Total:</h4>
       </div>
 
       <div class="col-md-4">
@@ -113,6 +109,6 @@
     </div>
   </div>
 
-  <script src="assets/script.js"></script>
+  <script src="/js/carrito.js"></script>
 </body>
 </html>

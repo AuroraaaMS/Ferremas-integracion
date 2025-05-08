@@ -122,18 +122,6 @@ app.get('/api/productos', (req, res) => {
 });
 
 
-// Consulta para obtener todos los productos del carrito 
-app.get('/api/productos', (req, res) => {
-  const query = 'SELECT id_producto, Nombre, descripcion, marca, precio FROM Producto';
-  
-  connection.query(query, (err, results) => {
-    if (err) {
-      return res.status(500).send('Error al obtener los productos');
-    }
-    res.status(200).json(results); 
-  });
-});
-
 app.use(express.json());
 
 
