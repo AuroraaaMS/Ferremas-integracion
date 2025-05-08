@@ -1,39 +1,61 @@
 window.onload = function() {
-    setTimeout(function() {
-      document.getElementById('loading').classList.add('hidden');
-    }, 1000);
-    mostrarProductos();// AQUI ESTA PARA LLAMAR A LA FUNCION DE MOSTRAR PRODUCTOS AL INICIAR PAGINA 
-    informacionUsuario();
-  };
+  setTimeout(function() {
+    document.getElementById('loading').classList.add('hidden');
+  }, 1000);
+
+  cargarSucursales(); 
+  informacionUsuario(); 
+};
 
 
 
   
-function mostrarProductos() {
-    fetch('/api/productos')
+  function mostrarProductosPorSucursal() {
+    const idSucursal = document.getElementById('sucursalSelect').value;
+  
+    fetch(`/api/productos/sucursal/${idSucursal}`)
       .then(response => response.json())
       .then(productos => {
-        console.log('Lista de productos:', productos);
-  
         const contenedor = document.getElementById('productos');
-        contenedor.innerHTML = ''; 
+        contenedor.innerHTML = '';
         productos.forEach(producto => {
           const div = document.createElement('div');
           div.innerHTML = `
-          <div class="product-item">
-            <h3>${producto.Nombre}</h3>
-            <p>${producto.descripcion}</p>
-            <p>${producto.marca}</p>
-            <span>$${producto.precio}</span>
-            <button>Agregar al carrito</button>
-            <p>Producto ID: ${producto.id_producto}</p> 
-          </div>
-        `;
+            <div class="product-item">
+              <h3>${producto.Nombre}</h3>
+              <p>${producto.descripcion}</p>
+              <p>Marca: ${producto.marca}</p>
+              <p>Precio: $${producto.precio}</p>
+              <p><strong>Stock en esta sucursal:</strong> ${producto.cantidad}</p>
+              <button>Agregar al carrito</button>
+            </div>
+          `;
           contenedor.appendChild(div);
         });
       })
       .catch(error => console.error('Error al cargar productos:', error));
   }
+  
+
+  function cargarSucursales() {
+    fetch('/api/sucursal')
+      .then(response => response.json())
+      .then(sucursales => {
+        const select = document.getElementById('sucursalSelect');
+        sucursales.forEach(sucursal => {
+          const option = document.createElement('option');
+          option.value = sucursal.id_sucursal;
+          option.text = sucursal.nombre_sucursal;
+          select.appendChild(option);
+        });
+  
+        if (sucursales.length > 0) {
+          mostrarProductosPorSucursal();
+        }
+      })
+      .catch(error => console.error('Error al cargar sucursales:', error));
+  }
+  
 
   
 let idUsuarioGlobal = null;

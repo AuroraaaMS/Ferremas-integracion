@@ -109,9 +109,9 @@ app.get('/logout', (req, res) => {
   });
 });
 
-// Consulta para obtener todos los productos
-app.get('/api/productos', (req, res) => {
-  const query = 'SELECT id_producto, Nombre, descripcion, marca, precio FROM Producto';
+
+app.get('/api/sucursal', (req, res) => {
+  const query = 'SELECT * FROM Sucursal';
   
   connection.query(query, (err, results) => {
     if (err) {
@@ -120,6 +120,31 @@ app.get('/api/productos', (req, res) => {
     res.status(200).json(results); 
   });
 });
+
+// Ruta para obtener productos con su stock por sucursal
+app.get('/api/productos/sucursal/:id_sucursal', (req, res) => {
+  const idSucursal = req.params.id_sucursal;
+
+  const query = `
+    SELECT 
+      p.id_producto, p.Nombre, p.descripcion, p.marca, p.precio, s.cantidad
+    FROM 
+      Producto p
+    JOIN 
+      Stock s ON p.id_producto = s.id_producto
+    WHERE 
+      s.id_sucursal = ?
+  `;
+
+  connection.query(query, [idSucursal], (err, results) => {
+    if (err) {
+      console.error('Error al obtener productos por sucursal:', err);
+      return res.status(500).send('Error al obtener productos por sucursal');
+    }
+    res.json(results);
+  });
+});
+
 
 
 app.use(express.json());
@@ -174,12 +199,12 @@ app.put('/api/cliente', (req, res) => {
 
 
 
-// Página de inicio
+
 app.get('/', (req, res) => {
   res.redirect('login.html');
 });
 
-// Archivos estáticos
+
 app.use(express.static(path.join(__dirname, 'public')));
 
 const PORT = process.env.PORT || 3000;
