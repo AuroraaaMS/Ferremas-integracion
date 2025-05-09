@@ -211,3 +211,148 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Servidor corriendo en http://localhost:${PORT}`);
 });
+
+//////carrito
+// Obtener productos del carrito por usuario
+app.get('/api/carrito', (req, res) => {
+  if (!req.session.usuario) {
+    return res.status(401).send('No autenticado');
+  }
+
+  const idUsuario = req.session.usuario.id;
+
+  const sql = `
+    SELECT ci.id_item, ci.cantidad, p.Nombre, p.precio, (ci.cantidad * p.precio) AS total
+    FROM Carrito_item ci
+    JOIN Carrito c ON ci.id_carrito = c.id_carrito
+    JOIN Producto p ON ci.id_producto = p.id_producto
+    WHERE c.id_usuario = ?
+  `;
+
+  connection.query(sql, [idUsuario], (err, results) => {
+    if (err) {
+      console.error('Error al obtener carrito:', err);
+      return res.status(500).send('Error al obtener el carrito');
+    }
+    res.json(results);
+  });
+});
+
+
+// Agregar producto al carrito
+app.post('/api/carrito/agregar', (req, res) => {
+  const { id_producto, cantidad } = req.body;
+  const idUsuario = req.session.usuario?.id;
+
+  if (!idUsuario) {
+    return res.status(401).send('Usuario no autenticado');
+  }
+
+  // Obtener el id_carrito del usuario
+  const getCarritoQuery = 'SELECT id_carrito FROM Carrito WHERE id_usuario = ?';
+
+  connection.query(getCarritoQuery, [idUsuario], (err, results) => {
+    if (err || results.length === 0) {
+      return res.status(500).send('Error al obtener el carrito del usuario');
+    }
+
+    const idCarrito = results[0].id_carrito;
+
+    const insertarItem = `
+      INSERT INTO Carrito_item (id_carrito, id_producto, cantidad)
+      VALUES (?, ?, ?)
+      ON DUPLICATE KEY UPDATE cantidad = cantidad + VALUES(cantidad)
+    `;
+
+    connection.query(insertarItem, [idCarrito, id_producto, cantidad], (err2) => {
+      if (err2) {
+        console.error('Error al agregar al carrito:', err2);
+        return res.status(500).send('Error al agregar producto al carrito');
+      }
+
+      res.status(200).send('Producto agregado al carrito');
+    });
+  });
+});
+
+
+// Eliminar un producto del carrito
+app.delete('/api/carrito/item/:id_item', (req, res) => {
+  const { id_item } = req.params;
+
+  const query = 'DELETE FROM Carrito_item WHERE id_item = ?';
+  connection.query(query, [id_item], (err) => {
+    if (err) {
+      console.error('Error al eliminar ítem del carrito:', err);
+      return res.status(500).send('Error al eliminar el ítem');
+    }
+    res.status(200).send('Ítem eliminado del carrito');
+  });
+});
+//////////////para pedido 
+app.post('/api/pedido/crear', (req, res) => {
+  const idUsuario = req.session.usuario?.id;
+  if (!idUsuario) return res.status(401).send('No autenticado');
+
+  const { metodo_entrega, direccion_entrega, tipo_documento } = req.body;
+
+  const obtenerCarrito = `SELECT id_carrito FROM Carrito WHERE id_usuario = ?`;
+
+  connection.query(obtenerCarrito, [idUsuario], (err, resultados) => {
+    if (err || resultados.length === 0) {
+      console.error('❌ Error al obtener carrito:', err);
+      return res.status(500).send('Error al obtener carrito');
+    }
+
+    const idCarrito = resultados[0].id_carrito;
+
+    const obtenerItems = `
+      SELECT ci.id_producto, ci.cantidad, p.precio
+      FROM Carrito_item ci
+      JOIN Producto p ON ci.id_producto = p.id_producto
+      WHERE ci.id_carrito = ?
+    `;
+
+    connection.query(obtenerItems, [idCarrito], (err2, items) => {
+      if (err2 || items.length === 0) {
+        console.error('❌ Error al obtener items del carrito:', err2);
+        return res.status(400).send('El carrito está vacío');
+      }
+
+      const total = items.reduce((acc, item) => acc + item.precio * item.cantidad, 0);
+
+      const crearPedido = `
+        INSERT INTO Pedido (fecha_pedido, id_usuario, metodo_entrega, direccion_entrega, tipo_documento, estado, total)
+        VALUES (NOW(), ?, ?, ?, ?, 'Pendiente', ?)
+      `;
+
+      connection.query(crearPedido, [idUsuario, metodo_entrega, direccion_entrega, tipo_documento, total], (err3, resultPedido) => {
+        if (err3) {
+          console.error('❌ Error al insertar pedido:', err3);
+          return res.status(500).send('Error al crear el pedido');
+        }
+
+        const idPedido = resultPedido.insertId;
+
+        const detalles = items.map(item => [idPedido, item.id_producto, item.cantidad, item.precio]);
+
+        const insertarDetalles = `
+          INSERT INTO Pedido_Detalle (id_pedido, id_producto, cantidad, precio_unitario)
+          VALUES ?
+        `;
+
+        connection.query(insertarDetalles, [detalles], (err4) => {
+          if (err4) {
+            console.error(' Error al insertar detalles:', err4);
+            return res.status(500).send('Error al crear detalles del pedido');
+          }
+
+          connection.query(`DELETE FROM Carrito_item WHERE id_carrito = ?`, [idCarrito], () => {
+            res.status(200).json({ mensaje: 'Pedido creado exitosamente', id_pedido: idPedido });
+          });
+        });
+      });
+    });
+  });
+});
+

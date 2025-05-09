@@ -7,6 +7,15 @@ window.onload = function() {
   informacionUsuario(); 
 };
 
+  function agregarAlCarrito(id_producto) {
+  fetch('/api/carrito/agregar', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id_producto, cantidad: 1 })
+  })
+  .then(res => res.text())
+  .then(msg => alert(msg));
+}
 
 
   
@@ -27,7 +36,7 @@ window.onload = function() {
               <p>Marca: ${producto.marca}</p>
               <p>Precio: $${producto.precio}</p>
               <p><strong>Stock en esta sucursal:</strong> ${producto.cantidad}</p>
-              <button>Agregar al carrito</button>
+              <button onclick="agregarAlCarrito(${producto.id_producto})">Agregar al carrito</button>
             </div>
           `;
           contenedor.appendChild(div);
