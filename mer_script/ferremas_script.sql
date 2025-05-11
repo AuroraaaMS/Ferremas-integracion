@@ -184,6 +184,7 @@ VALUES
 ('María Soto', 'abcd', '87654321-0', 'maria@example.com', 2),
 ('Pedro Rojas', 'pass123', '11222333-4', 'pedro@example.com', 1),
 ('Ana Torres', 'secure456', '99887766-5', 'ana@example.com', 3);
+('Javier Gutiérrez', '1234', '16678903-2', 'javier@example.com', 4);
 
 
 INSERT INTO Sucursal (nombre_sucursal, direccion_sucursal)
