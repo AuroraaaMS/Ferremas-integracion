@@ -28,20 +28,31 @@
     color: #0b2248;
   }
   
-  .btn-login {
-    position: relative;             
-    overflow: hidden;         
-    margin-left: 15%;
-    background-color: #0056b3;
-    border-radius: 3rem;
-    color: #ffffff;
-    box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.2); 
-    border: none;
-    padding: 1.5%;
-    cursor: pointer;
-    width: 7rem;
-  }
-  
+.btn-login {
+  position: relative;
+  overflow: hidden;
+  background-color: #0056b3;
+  border-radius: 3rem;
+  color: #ffffff;
+  box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.2); 
+  border: none;
+  padding: 1rem 2rem; 
+  cursor: pointer;
+  width: auto;
+  font-size: 1rem;
+  text-align: center;
+}
+
+.d-flex {
+  display: flex;
+  justify-content: center;
+  gap: 3rem;  
+}
+
+.no-underline {
+  text-decoration: none; 
+}
+
   .btn-login::before {
     content: "";
     position: absolute;

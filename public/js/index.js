@@ -1,7 +1,7 @@
 window.onload = function() {
   setTimeout(function() {
     document.getElementById('loading').classList.add('hidden');
-  }, 1000);
+  }, 400);
 
   cargarSucursales(); 
   informacionUsuario(); 
@@ -74,7 +74,7 @@ let idUsuarioGlobal = null;
     .then(response => response.json())
     .then(data => {
         if (data.nombre && data.id) {
-            document.getElementById('nombreusuario').textContent = data.nombre;
+            document.getElementById('nombreusuario').textContent = "Hola " + data.nombre;
             idUsuarioGlobal = data.id;
             console.log('ID del usuario guardado:', idUsuarioGlobal);
         } else {
