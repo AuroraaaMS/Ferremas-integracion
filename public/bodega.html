@@ -62,69 +62,54 @@
 <div id="inventario-container" class="table-responsive mb-4"></div>
 <div id="formulario-agregar" class="mb-4"></div>
 
-    <div class="row">
-      <div class="col-md-12">
-        <h3>Órdenes de pedidos</h3>
-        <table class="table">
-          <thead>
-            <tr>
-              <th>ID pedido</th>
-              <th>Cliente</th>
-              <th>Producto</th>
-              <th>Cantidad</th>
-              <th>Estado</th>
-              <th>Acción</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>#1234</td>
-              <td>Juan Pérez</td>
-              <td>Martillo</td>
-              <td>2</td>
-              <td><span class="badge bg-warning">Pendiente</span></td>
-              <td>
-                <button class="btn btn-success" onclick="aceptarPedido(1234)">Aceptar</button>
-                <button class="btn btn-danger" onclick="rechazarPedido(1234)">Rechazar</button>
-              </td>
-            </tr>
-            <tr>
-              <td>#5678</td>
-              <td>Maria López</td>
-              <td>Taladro</td>
-              <td>1</td>
-              <td><span class="badge bg-success">Aceptado</span></td>
-              <td>
-                <button class="btn btn-primary" onclick="entregarPedido(5678)">Entregar</button>
-              </td>
-            </tr>
-            <tr>
-              <td>#9876</td>
-              <td>Carlos Gómez</td>
-              <td>Clavos</td>
-              <td>5</td>
-              <td><span class="badge bg-danger">Rechazado</span></td>
-              <td><button class="btn btn-primary">Entregado</button></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
+   <div class="row">
+  <div class="col-md-12">
+    <h2 class="text-center">Órdenes de pedidos</h2>
+    <table class="table table-bordered table-hover">
+      <thead>
+        <tr>
+          <th>ID pedido</th>
+          <th>Cliente</th>
+          <th>Producto</th>
+          <th>Cantidad</th>
+          <th>Estado</th>
+          <th>Acción</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>#1234</td>
+          <td>Juan Pérez</td>
+          <td>Martillo</td>
+          <td>2</td>
+          <td><span class="badge bg-warning">Pendiente</span></td>
+          <td>
+            <button class="btn btn-success" onclick="aceptarPedido(1234)">Aceptar</button>
+            <button class="btn btn-danger" onclick="rechazarPedido(1234)">Rechazar</button>
+          </td>
+        </tr>
+        <tr>
+          <td>#5678</td>
+          <td>Maria López</td>
+          <td>Taladro</td>
+          <td>1</td>
+          <td><span class="badge bg-success">Aceptado</span></td>
+          <td>
+            <button class="btn btn-primary" onclick="entregarPedido(5678)">Entregar</button>
+          </td>
+        </tr>
+        <tr>
+          <td>#9876</td>
+          <td>Carlos Gómez</td>
+          <td>Clavos</td>
+          <td>5</td>
+          <td><span class="badge bg-danger">Rechazado</span></td>
+          <td><button class="btn btn-primary">Entregado</button></td>
+        </tr>
+      </tbody>
+    </table>
   </div>
-
-  <script>
-    function aceptarPedido(id) {
-      alert('Pedido ' + id + ' aceptado. Preparando...');
-    }
-
-    function rechazarPedido(id) {
-      alert('Pedido ' + id + ' rechazado.');
-    }
-
-    function entregarPedido(id) {
-      alert('Pedido ' + id + ' entregado al vendedor para despacho.');
-    }
-  </script>
+</div>
 
   <script src="js/bodega.js"></script>
 </body>
