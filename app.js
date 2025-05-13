@@ -213,16 +213,14 @@ app.get('/api/productos/bodega', (req, res) => {
 
     connection.query(query, (err, results) => {
       if (err) {
-        // Imprimir el error completo para depurar
         console.error('Error al ejecutar la consulta:', err);
         return res.status(500).json({ error: 'Error al obtener productos', details: err });
       }
 
-      console.log('Resultados de la consulta:', results);  // Verifica los resultados obtenidos
+      console.log('Resultados de la consulta:', results);  
       res.json(results);
     });
   } catch (err) {
-    // Si ocurre un error en la consulta, imprimirlo
     console.error('Error en la consulta SQL:', err);
     res.status(500).json({ error: 'Error al obtener productos', details: err });
   }

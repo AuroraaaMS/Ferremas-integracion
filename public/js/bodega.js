@@ -7,7 +7,7 @@ function cargarProductosBodega() {
       return response.json();
     })
     .then(data => {
-      console.log('Datos recibidos:', data); // Asegúrate de ver los datos en la consola
+      console.log('Datos recibidos:', data); 
       const tabla = document.querySelector('#tabla-inventario tbody');
       tabla.innerHTML = '';
 
