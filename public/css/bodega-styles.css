@@ -8,15 +8,15 @@ body {
   background: linear-gradient(90deg, #3d5174, #75a4f5);
   color: #ffffff;
   height: 4.5rem;
+  display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 0.5% 1%;
   width: 100%;
+  flex-wrap: wrap;
 }
 
 .navbar-brand {
-  padding: 0;
-  margin: 0;
   display: flex;
   align-items: center;
 }
@@ -24,7 +24,6 @@ body {
 .img_logo {
   width: 4rem;
   height: auto;
-  display: block;
 }
 
 .title_ferremas {
@@ -39,8 +38,8 @@ body {
 }
 
 .nav-link {
-  white-space: nowrap;
   color: white;
+  white-space: nowrap;
 }
 
 .carrito-img {
@@ -149,17 +148,17 @@ body {
 .table {
   width: 90%;
   margin: 0 auto;
-  border-collapse: collapse; 
+  border-collapse: collapse;
 }
 
 .table th, .table td {
-  text-align: center; 
-  padding: 12px; 
+  text-align: center;
+  padding: 12px;
 }
 
 .table th {
-  background-color: #f8f9fa; 
-  border-bottom: 2px solid #dee2e6; 
+  background-color: #f8f9fa;
+  border-bottom: 2px solid #dee2e6;
 }
 
 .table td {
@@ -167,21 +166,20 @@ body {
 }
 
 .table .badge {
-  padding: 5px 10px; 
+  padding: 5px 10px;
 }
 
 .table-bordered {
-  border: 1px solid #dee2e6; 
+  border: 1px solid #dee2e6;
 }
 
 .table-hover tbody tr:hover {
-  background-color: #f1f1f1; 
+  background-color: #f1f1f1;
 }
 
 .table-striped tbody tr:nth-of-type(odd) {
-  background-color: #f9f9f9; 
+  background-color: #f9f9f9;
 }
-
 
 @media (max-width: 992px) {
   .navbar {

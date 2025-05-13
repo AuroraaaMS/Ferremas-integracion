@@ -195,9 +195,38 @@ app.put('/api/cliente', (req, res) => {
   });
 });
 
+// Consulta para extraer datos para la bodega
+app.get('/api/productos/bodega', (req, res) => {
+  try {
+    const query = `
+      SELECT 
+        p.id_producto, 
+        p.Nombre, 
+        p.descripcion, 
+        p.marca, 
+        p.precio, 
+        IFNULL(SUM(s.cantidad), 0) AS total_stock
+      FROM Producto p
+      LEFT JOIN Stock s ON p.id_producto = s.id_producto
+      GROUP BY p.id_producto;
+    `;
 
+    connection.query(query, (err, results) => {
+      if (err) {
+        // Imprimir el error completo para depurar
+        console.error('Error al ejecutar la consulta:', err);
+        return res.status(500).json({ error: 'Error al obtener productos', details: err });
+      }
 
-
+      console.log('Resultados de la consulta:', results);  // Verifica los resultados obtenidos
+      res.json(results);
+    });
+  } catch (err) {
+    // Si ocurre un error en la consulta, imprimirlo
+    console.error('Error en la consulta SQL:', err);
+    res.status(500).json({ error: 'Error al obtener productos', details: err });
+  }
+});
 
 
 app.get('/', (req, res) => {
