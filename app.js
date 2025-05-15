@@ -1,14 +1,18 @@
+require('dotenv').config();////para el stripe
+
 const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
 const session = require('express-session');
 const connection = require('./bd');
+const crearPago = require('./routes/crearPago'); // ruta separada de Stripe
+
 
 const app = express();
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-
+app.use('/api', crearPago);
 app.use(session({
   secret: 'dinocontra',
   resave: false,
@@ -382,4 +386,8 @@ app.post('/api/pedido/crear', (req, res) => {
     });
   });
 });
+
+
+
+
 

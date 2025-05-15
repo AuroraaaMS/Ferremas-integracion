@@ -56,34 +56,90 @@ function eliminarItem(id_item) {
 }
 
 // Cerrar sesión
-function cerrarSesion() {
-  fetch('/logout').then(() => window.location.href = '/login.html');
-}
+async function crearPedido() {
+  try {
+    // 1. Obtener datos del formulario
+    const metodo_entrega = document.getElementById('retiro').value;
+    ////sucursale para retiro en tienda
+    let direccion;
 
-function crearPedido() {
-  const metodo_entrega = document.getElementById('retiro').value;
-  const direccion = document.getElementById('direccion').value || 'Retiro en tienda';
-  const tipo_documento = 'Boleta'; // Puedes hacerlo dinámico si quieres
+      if (metodo_entrega === 'tienda') {
+        direccion = document.getElementById('sucursal')?.value || 'Sucursal sin dirección';
+      } else {
+        direccion = document.getElementById('direccion').value || 'Sin dirección';
+      }
 
-  fetch('/api/pedido/crear', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
+    const tipo_documento = 'Boleta';
+
+    // 2. Guardar en sessionStorage para usar en exito.html
+    sessionStorage.setItem('pedido', JSON.stringify({
       metodo_entrega,
       direccion_entrega: direccion,
       tipo_documento
-    })
-  })
-  .then(res => {
-    if (!res.ok) throw new Error('No se pudo crear el pedido');
-    return res.json();
-  })
-  .then(data => {
-    alert('Pedido creado correctamente. ID: ' + data.id_pedido);
-  })
-  .catch(err => {
-    console.error('Error al crear pedido:', err);
-    alert('Hubo un error al crear el pedido');
-  });
-}
+    }));
 
+    // 3. Obtener total del carrito
+    const res = await fetch('/api/carrito');
+    const carrito = await res.json();
+    const total = carrito.reduce((acc, item) => acc + item.total, 0);
+
+    // 4. Llamar al backend para crear sesión Stripe
+    const pago = await fetch('/api/crear-pago', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ total })
+    });
+
+    const data = await pago.json();
+
+    if (data.url) {
+      window.location.href = data.url;
+    } else {
+      alert('No se pudo redirigir al pago');
+    }
+
+  } catch (err) {
+    console.error('Error al redirigir al pago:', err);
+    alert('Error al procesar el pago');
+  }
+}
+// Mostrar y cargar sucursales si se elige retiro en tienda
+document.getElementById('retiro').addEventListener('change', async () => {
+  const metodo = document.getElementById('retiro').value;
+  const container = document.getElementById('sucursal-container');
+
+  if (metodo === 'tienda') {
+    container.style.display = 'block';
+
+    // Crear elementos si no existen
+    if (!document.getElementById('sucursal')) {
+      const label = document.createElement('label');
+      label.setAttribute('for', 'sucursal');
+      label.textContent = 'Seleccione sucursal para retiro';
+
+      const select = document.createElement('select');
+      select.className = 'form-select';
+      select.id = 'sucursal';
+
+      container.appendChild(label);
+      container.appendChild(select);
+    }
+
+    // Traer sucursales desde backend
+    const res = await fetch('/api/sucursal');
+    const sucursales = await res.json();
+
+    const select = document.getElementById('sucursal');
+    select.innerHTML = '';
+
+    sucursales.forEach(sucursal => {
+      const option = document.createElement('option');
+      option.value = sucursal.direccion_sucursal;
+      option.textContent = sucursal.nombre_sucursal;
+      select.appendChild(option);
+    });
+
+  } else {
+    container.style.display = 'none';
+  }
+});

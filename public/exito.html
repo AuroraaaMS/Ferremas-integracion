@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Pago Exitoso</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="text-center mt-5">
+  <div class="container">
+    <h1 class="text-success">¡Gracias por tu compra! 🎉</h1>
+    <p class="mt-4">Tu pedido ha sido procesado con éxito.</p>
+
+    <div class="card mt-4 p-4 mx-auto" style="max-width: 500px;">
+      <h5 class="card-title">Detalles del pedido</h5>
+      <ul class="list-group list-group-flush text-start" id="info-pedido">
+        <!-- Aquí van los datos del pedido -->
+      </ul>
+    </div>
+
+    <a href="index.html" class="btn btn-primary mt-4">Volver a comprar</a>
+  </div>
+
+  <script>
+    const pedido = JSON.parse(sessionStorage.getItem('pedido'));
+
+    if (pedido) {
+      const info = document.getElementById('info-pedido');
+
+      const datos = [
+        { label: 'Método de entrega', value: pedido.metodo_entrega === 'tienda' ? 'Retiro en tienda' : 'Despacho a domicilio' },
+        { label: 'Dirección', value: pedido.direccion_entrega },
+        { label: 'Tipo de documento', value: pedido.tipo_documento }
+      ];
+
+      datos.forEach(d => {
+        const li = document.createElement('li');
+        li.classList.add('list-group-item');
+        li.innerHTML = `<strong>${d.label}:</strong> ${d.value}`;
+        info.appendChild(li);
+      });
+
+      // Limpia sessionStorage si ya no quieres guardarlo
+      sessionStorage.removeItem('pedido');
+    } else {
+      document.getElementById('info-pedido').innerHTML = '<li class="list-group-item text-danger">No se encontraron datos del pedido.</li>';
+    }
+  </script>
+</body>
+</html>

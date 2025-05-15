@@ -56,14 +56,6 @@
             </tr>
           </thead>
           <tbody>
-            <!-- <tr>
-              <td>Martillo</td>
-              <td>1</td>
-              <td>$20</td>
-              <td>$20</td>
-              <td><button class="btn btn-danger">Eliminar</button></td>
-            </tr> -->
-    
           </tbody>
         </table>
         <h4>Total:</h4>
@@ -75,15 +67,20 @@
           <div class="mb-3">
             <label for="retiro" class="form-label">Método de entrega</label>
             <select class="form-select" id="retiro">
-              <option value="tienda">Retiro en tienda</option>
-              <option value="domicilio">Despacho a domicilio</option>
-            </select>
+              <option value="domicilio" selected>Despacho a domicilio $10.000</option>
+              <option value="tienda">Retiro en tienda $0</option>
           </div>
 
-          <div class="mb-3">
+          <!-- Dirección para despacho -->
+          <div class="mb-3" id="direccion-container">
             <label for="direccion" class="form-label">Dirección (si selecciona despacho)</label>
             <input type="text" class="form-control" id="direccion" placeholder="Ingrese su dirección">
           </div>
+
+          <!-- Selector de sucursal -->
+          <div class="mb-3" id="sucursal-container" style="display: none;"></div>
+
+
 
           <h4>Opciones de pago</h4>
           <div class="mb-3">
@@ -102,12 +99,53 @@
             </div>
           </div>
 
-          <button type="button" class="btn btn-primary" onclick="crearPedido()">Finalizar compra</button>
+          <button type="button" class="btn btn-success w-100" id="btn-pagar">Finalizar y pagar con Stripe</button>
         </form>
       </div>
     </div>
   </div>
 
   <script src="/js/carrito.js"></script>
+  <script>
+    document.getElementById('btn-pagar').addEventListener('click', async () => {
+      try {
+        const metodo_entrega = document.getElementById('retiro').value === 'domicilio' ? 'domicilio' : 'retiro';
+        const direccion = document.getElementById('direccion').value || 'Retiro en tienda';
+        const tipo_documento = 'boleta';
+
+        sessionStorage.setItem('pedido', JSON.stringify({
+          metodo_entrega,
+          direccion_entrega: direccion,
+          tipo_documento
+        }));
+
+        const res = await fetch('/api/carrito');
+        const carrito = await res.json();
+        let total = carrito.reduce((acc, item) => acc + item.total, 0);
+
+              // Si es envío a domicilio agrega 10 lukas
+              if (metodo_entrega === 'domicilio') {
+                total += 10000;
+              }
+
+        const resp = await fetch('/api/crear-pago', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ total })
+        });
+
+        const data = await resp.json();
+
+        if (data.url) {
+          window.location.href = data.url;
+        } else {
+          alert('No se pudo redirigir al pago');
+        }
+      } catch (err) {
+        console.error('Error al procesar el pago:', err);
+        alert('Ocurrió un error al redirigir al pago');
+      }
+    });
+  </script>
 </body>
 </html>
