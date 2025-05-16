@@ -1,14 +1,9 @@
-require('dotenv').config(); 
-
 const express = require('express');
 const router = express.Router();
 
-
-const stripeSecretKey = process.env.STRIPE_PART1 + process.env.STRIPE_PART2 + process.env.STRIPE_PART3;
-
+const stripeSecretKey = require('../js'); 
 
 const stripe = require('stripe')(stripeSecretKey);
-
 
 router.post('/crear-pago', async (req, res) => {
   const { total } = req.body;
