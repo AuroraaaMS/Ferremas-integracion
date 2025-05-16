@@ -1,6 +1,14 @@
+require('dotenv').config(); 
+
 const express = require('express');
 const router = express.Router();
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+
+
+const stripeSecretKey = process.env.STRIPE_PART1 + process.env.STRIPE_PART2 + process.env.STRIPE_PART3;
+
+
+const stripe = require('stripe')(stripeSecretKey);
+
 
 router.post('/crear-pago', async (req, res) => {
   const { total } = req.body;
@@ -28,11 +36,10 @@ router.post('/crear-pago', async (req, res) => {
     });
 
     res.json({ url: session.url });
-    } catch (error) {
-    console.error('❌ Error al crear sesión de pago:', error); // 👈 agrega esto
+  } catch (error) {
+    console.error('❌ Error al crear sesión de pago:', error);
     res.status(500).json({ error: error.message });
   }
-
 });
 
 module.exports = router;
