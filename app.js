@@ -199,37 +199,118 @@ app.put('/api/cliente', (req, res) => {
   });
 });
 
-// Consulta para extraer datos para la bodega
-app.get('/api/productos/bodega', (req, res) => {
-  try {
-    const query = `
-      SELECT 
-        p.id_producto, 
-        p.Nombre, 
-        p.descripcion, 
-        p.marca, 
-        p.precio, 
-        IFNULL(SUM(s.cantidad), 0) AS total_stock
-      FROM Producto p
-      LEFT JOIN Stock s ON p.id_producto = s.id_producto
-      GROUP BY p.id_producto;
-    `;
+// Consulta para obtener todos los productos 
 
-    connection.query(query, (err, results) => {
-      if (err) {
-        console.error('Error al ejecutar la consulta:', err);
-        return res.status(500).json({ error: 'Error al obtener productos', details: err });
-      }
-
-      console.log('Resultados de la consulta:', results);  
-      res.json(results);
-    });
-  } catch (err) {
-    console.error('Error en la consulta SQL:', err);
-    res.status(500).json({ error: 'Error al obtener productos', details: err });
-  }
+router.get('/api/sucursales', async (req, res) => {
+    try {
+        const sucursales = await db.query('SELECT * FROM Sucursal');
+        res.json(sucursales);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
 });
 
+router.get('/api/productos/bodega', async (req, res) => {
+    try {
+        const { sucursal } = req.query;
+        if (!sucursal) {
+            return res.status(400).json({ error: 'ID de sucursal requerido' });
+        }
+
+        const query = `
+            SELECT 
+                p.id_producto,
+                p.Nombre,
+                p.descripcion,
+                p.marca,
+                p.precio,
+                c.nombre_categoria,
+                COALESCE(SUM(s.cantidad), 0) AS total_stock
+            FROM Producto p
+            JOIN Categoria c ON p.id_categoria = c.id_categoria
+            LEFT JOIN Stock s ON p.id_producto = s.id_producto AND s.id_sucursal = ?
+            GROUP BY p.id_producto
+        `;
+        
+        const productos = await db.query(query, [sucursal]);
+        res.json(productos);
+    } catch (error) {
+        console.error('Error en /api/productos/bodega:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+router.get('/api/productos/bodega/:id', async (req, res) => {
+    try {
+        const query = `
+            SELECT p.*, c.nombre_categoria
+            FROM Producto p
+            JOIN Categoria c ON p.id_categoria = c.id_categoria
+            WHERE p.id_producto = ?
+        `;
+        const [producto] = await db.query(query, [req.params.id]);
+        if (!producto) return res.status(404).json({ error: 'Producto no encontrado' });
+        res.json(producto);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+router.post('/api/productos/bodega', async (req, res) => {
+    try {
+        const { Nombre, descripcion, marca, precio, id_categoria } = req.body;
+        const result = await db.query(
+            'INSERT INTO Producto (Nombre, descripcion, marca, precio, id_categoria) VALUES (?, ?, ?, ?, ?)',
+            [Nombre, descripcion, marca, precio, id_categoria]
+        );
+        res.status(201).json({ id: result.insertId });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+router.put('/api/productos/bodega/:id', async (req, res) => {
+    try {
+        const { Nombre, descripcion, marca, precio, id_categoria } = req.body;
+        await db.query(
+            'UPDATE Producto SET Nombre = ?, descripcion = ?, marca = ?, precio = ?, id_categoria = ? WHERE id_producto = ?',
+            [Nombre, descripcion, marca, precio, id_categoria, req.params.id]
+        );
+        res.json({ message: 'Producto actualizado' });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+router.delete('/api/productos/bodega/:id', async (req, res) => {
+    try {
+        await db.query('DELETE FROM Producto WHERE id_producto = ?', [req.params.id]);
+        res.json({ message: 'Producto eliminado' });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+router.delete('/api/stock/producto/:idProducto/sucursal/:idSucursal', async (req, res) => {
+    try {
+        await db.query(
+            'DELETE FROM Stock WHERE id_producto = ? AND id_sucursal = ?',
+            [req.params.idProducto, req.params.idSucursal]
+        );
+        res.json({ success: true });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+router.get('/api/categorias', async (req, res) => {
+    try {
+        const categorias = await db.query('SELECT * FROM Categoria');
+        res.json(categorias);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
 
 app.get('/', (req, res) => {
   res.redirect('login.html');
@@ -387,6 +468,7 @@ app.post('/api/pedido/crear', (req, res) => {
   });
 });
 
+module.exports = router;
 
 
 

@@ -136,8 +136,6 @@ CREATE TABLE `Reclamo` (
   FOREIGN KEY (`id_pedido`) REFERENCES `Pedido` (`id_pedido`)
 );
 
--- Asegúrate de que los roles existan en la tabla Rol antes de ejecutar estos inserts
-
 USE `ferremas`;
 
 
