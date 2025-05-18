@@ -13,7 +13,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(express.json());
 app.use('/api', crearPago);
-app.use(express.static(path.join(__dirname, 'public')));
+
 
 app.use(session({
   secret: 'dinocontra',
@@ -93,7 +93,7 @@ req.session.save(err => {
 app.get('/', (req, res) => {
   res.redirect('/login.html');
 });
-
+app.use(express.static(path.join(__dirname, 'public')));
 // Iniciar servidor
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
@@ -390,3 +390,5 @@ app.post('/api/pedido/crear', (req, res) => {
 
 
 
+
+app.use(express.static(path.join(__dirname, 'public')));  // ESTE SIEMPRE DEJENLO AL FINAL... SIEMPREE NO LO TOQUEN 
