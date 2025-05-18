@@ -1,135 +1,147 @@
-let productoSeleccionadoId = null;
+document.addEventListener("DOMContentLoaded", () => {
+  const selectSucursal = document.getElementById("selectSucursal");
+  const tablaInventario = document.getElementById("tablaInventario").querySelector("tbody");
+  const formProducto = document.getElementById("formProducto");
+  const productoIdInput = document.getElementById("productoId");
+  const inputs = {
+    nombre: document.getElementById("nombreProducto"),
+    descripcion: document.getElementById("descripcion"),
+    marca: document.getElementById("marca"),
+    precio: document.getElementById("precio"),
+    categoria: document.getElementById("categoria")
+  };
 
-document.addEventListener('DOMContentLoaded', () => {
-    cargarProductosBodega();
-    configurarEventos();
-});
+  function mostrarToast(mensaje) {
+    const toast = document.getElementById("toast");
+    toast.innerText = mensaje;
+    toast.classList.add("show");
+    setTimeout(() => toast.classList.remove("show"), 3000);
+  }
 
-function configurarEventos() {
-    document.getElementById('form-producto').addEventListener('submit', manejarFormulario);
-    document.getElementById('btn-limpiar').addEventListener('click', limpiarFormulario);
-    document.getElementById('confirmDeleteBtn').addEventListener('click', eliminarProductoConfirmado);
-}
+  function limpiarFormulario() {
+    productoIdInput.value = "";
+    formProducto.reset();
+  }
 
-async function cargarProductosBodega() {
-    try {
-        const response = await fetch('/api/productos/bodega');
-        if (!response.ok) throw new Error('Error al cargar productos');
-        const productos = await response.json();
-        mostrarProductos(productos);
-    } catch (error) {
-        mostrarError(error.message);
-    }
-}
+  function cargarCategorias() {
+    fetch("/api/categorias")
+      .then(res => res.json())
+      .then(data => {
+        inputs.categoria.innerHTML = "";
+        data.forEach(cat => {
+          const option = document.createElement("option");
+          option.value = cat.id_categoria;
+          option.textContent = cat.nombre_categoria;
+          inputs.categoria.appendChild(option);
+        });
+      });
+  }
 
-function mostrarProductos(productos) {
-    const tbody = document.querySelector('#tabla-inventario tbody');
-    tbody.innerHTML = '';
+  function cargarProductos(idSucursal) {
+    fetch(`/api/productos/bodega/${idSucursal}`)
+      .then(res => res.json())
+      .then(data => {
+        tablaInventario.innerHTML = "";
+        data.forEach(prod => {
+          const fila = document.createElement("tr");
+          fila.innerHTML = `
+            <td>${prod.id_producto}</td>
+            <td>${prod.Nombre}</td>
+            <td>${prod.descripcion}</td>
+            <td>${prod.marca}</td>
+            <td>${prod.precio}</td>
+            <td>${prod.nombre_categoria}</td>
+            <td>${prod.total_stock}</td>
+            <td>
+              <button class="btn btn-warning btn-sm btn-editar">Editar</button>
+              <button class="btn btn-danger btn-sm btn-eliminar">Eliminar</button>
+            </td>
+          `;
+          tablaInventario.appendChild(fila);
+        });
+      });
+  }
 
-    productos.forEach(producto => {
-        const row = `
-            <tr>
-                <td>${producto.id_producto}</td>
-                <td>${producto.Nombre}</td>
-                <td>${producto.descripcion}</td>
-                <td>${producto.marca}</td>
-                <td>${producto.precio}</td>
-                <td>${producto.total_stock}</td>
-                <td>
-                    <button class="btn btn-warning btn-sm btn-editar" data-id="${producto.id_producto}">Editar</button>
-                    <button class="btn btn-danger btn-sm btn-eliminar" data-id="${producto.id_producto}">Eliminar</button>
-                </td>
-            </tr>`;
-        tbody.innerHTML += row;
-    });
+  selectSucursal.addEventListener("change", () => {
+    const idSucursal = selectSucursal.value;
+    if (idSucursal) cargarProductos(idSucursal);
+  });
 
-    document.querySelectorAll('.btn-editar').forEach(btn => {
-        btn.addEventListener('click', () => editarProducto(btn.dataset.id));
-    });
-
-    document.querySelectorAll('.btn-eliminar').forEach(btn => {
-        btn.addEventListener('click', () => confirmarEliminacion(btn.dataset.id));
-    });
-}
-
-async function manejarFormulario(e) {
+  formProducto.addEventListener("submit", (e) => {
     e.preventDefault();
-    const producto = {
-        Nombre: document.getElementById('nombre').value,
-        descripcion: document.getElementById('descripcion').value,
-        marca: document.getElementById('marca').value,
-        precio: document.getElementById('precio').value
+
+    const nuevoProducto = {
+      Nombre: inputs.nombre.value,
+      descripcion: inputs.descripcion.value,
+      marca: inputs.marca.value,
+      precio: parseFloat(inputs.precio.value),
+      id_categoria: parseInt(inputs.categoria.value)
     };
 
-    try {
-        const metodo = productoSeleccionadoId ? 'PUT' : 'POST';
-        const url = productoSeleccionadoId ? `/api/productos/bodega/${productoSeleccionadoId}` : '/api/productos/bodega';
-        const response = await fetch(url, {
-            method: metodo,
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(producto)
-        });
-        if (!response.ok) throw new Error('Error al guardar');
-        mostrarExito(productoSeleccionadoId ? 'Producto actualizado' : 'Producto creado');
-        limpiarFormulario();
-        cargarProductosBodega();
-    } catch (error) {
-        mostrarError(error.message);
+    const idProducto = productoIdInput.value;
+
+    if (idProducto) {
+      fetch(`/api/productos/bodega/${idProducto}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(nuevoProducto)
+      })
+        .then(res => res.json())
+        .then(() => {
+          mostrarToast("Producto actualizado correctamente");
+          limpiarFormulario();
+          cargarProductos(selectSucursal.value);
+        })
+        .catch(() => mostrarToast("Error al actualizar producto"));
+    } else {
+      fetch("/api/productos/bodega", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(nuevoProducto)
+      })
+        .then(res => res.json())
+        .then(() => {
+          mostrarToast("Producto creado exitosamente");
+          limpiarFormulario();
+          cargarProductos(selectSucursal.value);
+        })
+        .catch(() => mostrarToast("Error al crear producto"));
     }
-}
+  });
 
-async function editarProducto(id) {
-    try {
-        const response = await fetch(`/api/productos/bodega/${id}`);
-        if (!response.ok) throw new Error('Error al cargar producto');
-        const producto = await response.json();
-        productoSeleccionadoId = producto.id_producto;
-        document.getElementById('nombre').value = producto.Nombre;
-        document.getElementById('descripcion').value = producto.descripcion;
-        document.getElementById('marca').value = producto.marca;
-        document.getElementById('precio').value = producto.precio;
-    } catch (error) {
-        mostrarError(error.message);
+  tablaInventario.addEventListener("click", (e) => {
+    const fila = e.target.closest("tr");
+    if (!fila) return;
+
+    const idProducto = fila.children[0].textContent;
+
+    if (e.target.classList.contains("btn-editar")) {
+      productoIdInput.value = idProducto;
+      inputs.nombre.value = fila.children[1].textContent;
+      inputs.descripcion.value = fila.children[2].textContent;
+      inputs.marca.value = fila.children[3].textContent;
+      inputs.precio.value = fila.children[4].textContent;
+      const nombreCategoria = fila.children[5].textContent;
+      const opcionCategoria = [...inputs.categoria.options].find(op => op.textContent === nombreCategoria);
+      if (opcionCategoria) inputs.categoria.value = opcionCategoria.value;
     }
-}
 
-function confirmarEliminacion(id) {
-    productoSeleccionadoId = id;
-    new bootstrap.Modal(document.getElementById('confirmDeleteModal')).show();
-}
-
-async function eliminarProductoConfirmado() {
-    if (!productoSeleccionadoId) return;
-    try {
-        const response = await fetch(`/api/productos/bodega/${productoSeleccionadoId}`, { method: 'DELETE' });
-        if (!response.ok) throw new Error('Error al eliminar');
-        mostrarExito('Producto eliminado');
-        cargarProductosBodega();
-        bootstrap.Modal.getInstance(document.getElementById('confirmDeleteModal')).hide();
-    } catch (error) {
-        mostrarError(error.message);
+    if (e.target.classList.contains("btn-eliminar")) {
+      if (confirm("¿Deseas eliminar este producto?")) {
+        fetch(`/api/productos/bodega/${idProducto}`, {
+          method: "DELETE"
+        })
+          .then(res => res.json())
+          .then(() => {
+            mostrarToast("Producto eliminado correctamente");
+            fila.remove(); 
+          })
+          .catch(() => mostrarToast("Error al eliminar producto"));
+      }
     }
-}
+  });
 
-function limpiarFormulario() {
-    document.getElementById('form-producto').reset();
-    productoSeleccionadoId = null;
-}
-
-function mostrarExito(mensaje) {
-    const toastEl = document.getElementById('liveToast');
-    const toastMessage = document.getElementById('toastMessage');
-    toastMessage.textContent = mensaje;
-    toastEl.classList.remove('bg-danger', 'bg-warning');
-    toastEl.classList.add('bg-success');
-    new bootstrap.Toast(toastEl, { autohide: true, delay: 3000 }).show();
-}
-
-function mostrarError(mensaje) {
-    const toastEl = document.getElementById('liveToast');
-    const toastMessage = document.getElementById('toastMessage');
-    toastMessage.textContent = mensaje;
-    toastEl.classList.remove('bg-success', 'bg-warning');
-    toastEl.classList.add('bg-danger');
-    new bootstrap.Toast(toastEl, { autohide: true, delay: 5000 }).show();
-}
+  cargarCategorias();
+  selectSucursal.value = "1";            
+  cargarProductos("1");                  
+});

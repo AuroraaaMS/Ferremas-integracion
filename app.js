@@ -1,24 +1,27 @@
-require('dotenv').config();////para el stripe
+require('dotenv').config(); // Stripe
 
 const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
 const session = require('express-session');
 const connection = require('./bd');
-const crearPago = require('./routes/crearPago'); // ruta separada de Stripe
-
+const crearPago = require('./routes/crearPago'); // Stripe
 
 const app = express();
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+app.use(express.json());
 app.use('/api', crearPago);
+app.use(express.static(path.join(__dirname, 'public')));
+
 app.use(session({
   secret: 'dinocontra',
   resave: false,
   saveUninitialized: true
 }));
 
+// Middleware para roles
 function requireRole(rolEsperado) {
   return (req, res, next) => {
     if (!req.session.usuario || req.session.usuario.rol !== rolEsperado) {
@@ -28,170 +31,122 @@ function requireRole(rolEsperado) {
   };
 }
 
-
+// Rutas protegidas por roles
 app.get('/index.html', requireRole(1), (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 app.get('/carrito.html', requireRole(1), (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'carrito.html'));
 });
-
 app.get('/vendedor.html', requireRole(2), (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'vendedor.html'));
 });
-
 app.get('/bodega.html', requireRole(3), (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'bodega.html'));
 });
-
 app.get('/admin.html', requireRole(4), (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'admin.html'));
 });
-
 app.get('/contador.html', requireRole(5), (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'contador.html'));
 });
 
-// Consulta para iniciar sesión (No tocar)
+// Login
 app.post('/api/login', (req, res) => {
   const { correo, pass, rol } = req.body;
-
   const query = 'SELECT * FROM Usuario WHERE correo = ? AND pass = ? and Rol_id = ?';
   connection.query(query, [correo, pass, rol], (err, results) => {
-    if (err) {
-      return res.status(500).send('Error al verificar el usuario');
-    }
+    if (err) return res.status(500).send('Error al verificar el usuario');
 
     if (results.length > 0) {
       const usuario = results[0];
-    
-      console.log('Usuario encontrado:', usuario);
-    
-      req.session.usuario = {
-        id: usuario.id_usuario,
-        rol: Number(usuario.Rol_id),
-        nombre: usuario.nombre
-      };
-    
-      console.log('Sesión iniciada con:', req.session.usuario);
-    
-      let redirectUrl = '';
-      switch (usuario.Rol_id) {
-        case 1: redirectUrl = '/index.html'; break;
-        case 2: redirectUrl = '/vendedor.html'; break;
-        case 3: redirectUrl = '/bodega.html'; break;
-        case 4: redirectUrl = '/admin.html'; break;
-        case 5: redirectUrl = '/contador.html'; break;
-        default: redirectUrl = '/login.html';
-      }
-  
-      res.status(200).json({ message: 'Inicio de sesión exitoso', redirect: redirectUrl });
-    }
-     else {
+     req.session.usuario = {
+  id: usuario.id_usuario,
+  rol: Number(usuario.Rol_id),
+  nombre: usuario.nombre
+};
+
+req.session.save(err => {
+  if (err) return res.status(500).send('Error al guardar la sesión');
+
+  let redirectUrl = '';
+  switch (usuario.Rol_id) {
+    case 1: redirectUrl = '/index.html'; break;
+    case 2: redirectUrl = '/vendedor.html'; break;
+    case 3: redirectUrl = '/bodega.html'; break;
+    case 4: redirectUrl = '/admin.html'; break;
+    case 5: redirectUrl = '/contador.html'; break;
+    default: redirectUrl = '/login.html';
+  }
+
+  res.status(200).json({ message: 'Inicio de sesión exitoso', redirect: redirectUrl });
+});
+
+    } else {
       res.status(400).send('Correo o contraseña incorrectos');
     }
   });
 });
 
 
+// Redireccionar a login por defecto
+app.get('/', (req, res) => {
+  res.redirect('/login.html');
+});
 
-// Ruta para obtener los datos del usuario de la sesión
+// Iniciar servidor
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Servidor corriendo en http://localhost:${PORT}`);
+});
+
+
+// Perfil
 app.get('/api/perfil', (req, res) => {
-  if (!req.session.usuario) {
-    return res.status(403).send('Usuario no autenticado');
-  }
+  if (!req.session.usuario) return res.status(403).send('Usuario no autenticado');
 
   const { nombre, id } = req.session.usuario;
   res.status(200).json({ nombre, id });
 });
 
-
-// Cerrar sesión
+// Logout
 app.get('/logout', (req, res) => {
   req.session.destroy(() => {
     res.redirect('/login.html');
   });
 });
 
-
+// Sucursales
 app.get('/api/sucursal', (req, res) => {
   const query = 'SELECT * FROM Sucursal';
-  
   connection.query(query, (err, results) => {
-    if (err) {
-      return res.status(500).send('Error al obtener los productos');
-    }
-    res.status(200).json(results); 
-  });
-});
-
-// Ruta para obtener productos con su stock por sucursal
-app.get('/api/productos/sucursal/:id_sucursal', (req, res) => {
-  const idSucursal = req.params.id_sucursal;
-
-  const query = `
-    SELECT 
-      p.id_producto, p.Nombre, p.descripcion, p.marca, p.precio, s.cantidad
-    FROM 
-      Producto p
-    JOIN 
-      Stock s ON p.id_producto = s.id_producto
-    WHERE 
-      s.id_sucursal = ?
-  `;
-
-  connection.query(query, [idSucursal], (err, results) => {
-    if (err) {
-      console.error('Error al obtener productos por sucursal:', err);
-      return res.status(500).send('Error al obtener productos por sucursal');
-    }
-    res.json(results);
+    if (err) return res.status(500).send('Error al obtener las sucursales');
+    res.status(200).json(results);
   });
 });
 
 
 
-app.use(express.json());
-
-
-//Crear cliente y carrito 
+// Crear cliente + carrito
 app.put('/api/cliente', (req, res) => {
   const { nombre, pass, rut, correo } = req.body;
-  const rol_id = 1;  
+  const rol_id = 1;
 
   connection.beginTransaction(err => {
-    if (err) {
-      return res.status(500).send('Error iniciando transacción');
-    }
-    const sqlUsuario = `
-      INSERT INTO Usuario (nombre, pass, rut, correo, Rol_id)
-      VALUES (?, ?, ?, ?, ?)
-    `;
+    if (err) return res.status(500).send('Error iniciando transacción');
+
+    const sqlUsuario = `INSERT INTO Usuario (nombre, pass, rut, correo, Rol_id) VALUES (?, ?, ?, ?, ?)`;
     connection.query(sqlUsuario, [nombre, pass, rut, correo, rol_id], (err, resultUsuario) => {
-      if (err) {
-        return connection.rollback(() => {
-          res.status(500).send('Error al insertar usuario');
-        });
-      }
+      if (err) return connection.rollback(() => res.status(500).send('Error al insertar usuario'));
 
       const nuevoUsuarioId = resultUsuario.insertId;
+      const sqlCarrito = `INSERT INTO Carrito (fecha_creacion, id_usuario) VALUES (NOW(), ?)`;
 
-      const sqlCarrito = `
-        INSERT INTO Carrito (fecha_creacion, id_usuario)
-        VALUES (NOW(), ?)
-      `;
       connection.query(sqlCarrito, [nuevoUsuarioId], (err) => {
-        if (err) {
-          return connection.rollback(() => {
-            res.status(500).send('Error al insertar carrito');
-          });
-        }
+        if (err) return connection.rollback(() => res.status(500).send('Error al insertar carrito'));
+
         connection.commit(err => {
-          if (err) {
-            return connection.rollback(() => {
-              res.status(500).send('Error al confirmar transacción');
-            });
-          }
+          if (err) return connection.rollback(() => res.status(500).send('Error al confirmar transacción'));
           res.status(200).send('Cliente y carrito creados exitosamente');
         });
       });
@@ -199,133 +154,99 @@ app.put('/api/cliente', (req, res) => {
   });
 });
 
-// Consulta para obtener todos los productos 
 
-router.get('/api/sucursales', async (req, res) => {
-    try {
-        const sucursales = await db.query('SELECT * FROM Sucursal');
-        res.json(sucursales);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-});
+// --- CRUD DE PRODUCTOS EN BODEGA (usando `connection`, no `db`) ---
 
-router.get('/api/productos/bodega', async (req, res) => {
-    try {
-        const { sucursal } = req.query;
-        if (!sucursal) {
-            return res.status(400).json({ error: 'ID de sucursal requerido' });
-        }
+// Obtener productos de bodega
+app.get('/api/productos/bodega/:id_sucursal', (req, res) => {
+  const { id_sucursal } = req.params;
+  if (!id_sucursal) return res.status(400).json({ error: 'ID de sucursal requerido' });
 
-        const query = `
-            SELECT 
-                p.id_producto,
-                p.Nombre,
-                p.descripcion,
-                p.marca,
-                p.precio,
-                c.nombre_categoria,
-                COALESCE(SUM(s.cantidad), 0) AS total_stock
-            FROM Producto p
-            JOIN Categoria c ON p.id_categoria = c.id_categoria
-            LEFT JOIN Stock s ON p.id_producto = s.id_producto AND s.id_sucursal = ?
-            GROUP BY p.id_producto
-        `;
-        
-        const productos = await db.query(query, [sucursal]);
-        res.json(productos);
-    } catch (error) {
-        console.error('Error en /api/productos/bodega:', error);
-        res.status(500).json({ error: error.message });
-    }
-});
+  const query = `
+    SELECT 
+      p.id_producto, p.Nombre, p.descripcion, p.marca, p.precio, c.nombre_categoria,
+      COALESCE(SUM(s.cantidad), 0) AS total_stock
+    FROM Producto p
+    JOIN Categoria c ON p.id_categoria = c.id_categoria
+    LEFT JOIN Stock s ON p.id_producto = s.id_producto AND s.id_sucursal = ?
+    GROUP BY p.id_producto, p.Nombre, p.descripcion, p.marca, p.precio, c.nombre_categoria
+  `;
 
-router.get('/api/productos/bodega/:id', async (req, res) => {
-    try {
-        const query = `
-            SELECT p.*, c.nombre_categoria
-            FROM Producto p
-            JOIN Categoria c ON p.id_categoria = c.id_categoria
-            WHERE p.id_producto = ?
-        `;
-        const [producto] = await db.query(query, [req.params.id]);
-        if (!producto) return res.status(404).json({ error: 'Producto no encontrado' });
-        res.json(producto);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-});
-
-router.post('/api/productos/bodega', async (req, res) => {
-    try {
-        const { Nombre, descripcion, marca, precio, id_categoria } = req.body;
-        const result = await db.query(
-            'INSERT INTO Producto (Nombre, descripcion, marca, precio, id_categoria) VALUES (?, ?, ?, ?, ?)',
-            [Nombre, descripcion, marca, precio, id_categoria]
-        );
-        res.status(201).json({ id: result.insertId });
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-});
-
-router.put('/api/productos/bodega/:id', async (req, res) => {
-    try {
-        const { Nombre, descripcion, marca, precio, id_categoria } = req.body;
-        await db.query(
-            'UPDATE Producto SET Nombre = ?, descripcion = ?, marca = ?, precio = ?, id_categoria = ? WHERE id_producto = ?',
-            [Nombre, descripcion, marca, precio, id_categoria, req.params.id]
-        );
-        res.json({ message: 'Producto actualizado' });
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-});
-
-router.delete('/api/productos/bodega/:id', async (req, res) => {
-    try {
-        await db.query('DELETE FROM Producto WHERE id_producto = ?', [req.params.id]);
-        res.json({ message: 'Producto eliminado' });
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-});
-
-router.delete('/api/stock/producto/:idProducto/sucursal/:idSucursal', async (req, res) => {
-    try {
-        await db.query(
-            'DELETE FROM Stock WHERE id_producto = ? AND id_sucursal = ?',
-            [req.params.idProducto, req.params.idSucursal]
-        );
-        res.json({ success: true });
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-});
-
-router.get('/api/categorias', async (req, res) => {
-    try {
-        const categorias = await db.query('SELECT * FROM Categoria');
-        res.json(categorias);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-});
-
-app.get('/', (req, res) => {
-  res.redirect('login.html');
+  connection.query(query, [id_sucursal], (err, results) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json(results);
+  });
 });
 
 
-app.use(express.static(path.join(__dirname, 'public')));
-
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Servidor corriendo en http://localhost:${PORT}`);
+// Obtener un producto por ID
+app.get('/api/productos/bodega/:id', (req, res) => {
+  const query = `
+    SELECT p.*, c.nombre_categoria
+    FROM Producto p
+    JOIN Categoria c ON p.id_categoria = c.id_categoria
+    WHERE p.id_producto = ?
+  `;
+  connection.query(query, [req.params.id], (err, results) => {
+    if (err) return res.status(500).json({ error: err.message });
+    if (results.length === 0) return res.status(404).json({ error: 'Producto no encontrado' });
+    res.json(results[0]);
+  });
 });
 
-//////carrito
-// Obtener productos del carrito por usuario
+// Crear producto
+app.post('/api/productos/bodega', (req, res) => {
+  const { Nombre, descripcion, marca, precio, id_categoria } = req.body;
+  const query = 'INSERT INTO Producto (Nombre, descripcion, marca, precio, id_categoria) VALUES (?, ?, ?, ?, ?)';
+  connection.query(query, [Nombre, descripcion, marca, precio, id_categoria], (err, result) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.status(201).json({ id: result.insertId });
+  });
+});
+
+// Actualizar producto
+app.put('/api/productos/bodega/:id', (req, res) => {
+  const { Nombre, descripcion, marca, precio, id_categoria } = req.body;
+  const query = `
+    UPDATE Producto 
+    SET Nombre = ?, descripcion = ?, marca = ?, precio = ?, id_categoria = ?
+    WHERE id_producto = ?
+  `;
+  connection.query(query, [Nombre, descripcion, marca, precio, id_categoria, req.params.id], (err) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json({ message: 'Producto actualizado' });
+  });
+});
+
+// Eliminar producto
+app.delete('/api/productos/bodega/:id', (req, res) => {
+  const idProducto = req.params.id;
+
+  // Primero borra el stock asociado al producto
+  const deleteStockQuery = 'DELETE FROM Stock WHERE id_producto = ?';
+  connection.query(deleteStockQuery, [idProducto], (err) => {
+    if (err) return res.status(500).json({ error: 'Error al eliminar stock: ' + err.message });
+
+    // Luego borra el producto
+    const deleteProductoQuery = 'DELETE FROM Producto WHERE id_producto = ?';
+    connection.query(deleteProductoQuery, [idProducto], (err2) => {
+      if (err2) return res.status(500).json({ error: 'Error al eliminar producto: ' + err2.message });
+      res.json({ message: 'Producto y stock eliminados correctamente' });
+    });
+  });
+});
+
+
+// Obtener categorías
+app.get('/api/categorias', (req, res) => {
+  connection.query('SELECT * FROM Categoria', (err, results) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json(results);
+  });
+});
+
+
+
 app.get('/api/carrito', (req, res) => {
   if (!req.session.usuario) {
     return res.status(401).send('No autenticado');
@@ -351,7 +272,6 @@ app.get('/api/carrito', (req, res) => {
 });
 
 
-// Agregar producto al carrito
 app.post('/api/carrito/agregar', (req, res) => {
   const { id_producto, cantidad } = req.body;
   const idUsuario = req.session.usuario?.id;
@@ -467,9 +387,6 @@ app.post('/api/pedido/crear', (req, res) => {
     });
   });
 });
-
-module.exports = router;
-
 
 
 

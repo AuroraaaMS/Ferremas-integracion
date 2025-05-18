@@ -22,7 +22,7 @@ window.onload = function() {
   function mostrarProductosPorSucursal() {
     const idSucursal = document.getElementById('sucursalSelect').value;
   
-    fetch(`/api/productos/sucursal/${idSucursal}`)
+    fetch(`/api/productos/bodega/${idSucursal}`)
       .then(response => response.json())
       .then(productos => {
         const contenedor = document.getElementById('productos');
@@ -35,7 +35,7 @@ window.onload = function() {
               <p>${producto.descripcion}</p>
               <p>Marca: ${producto.marca}</p>
               <p>Precio: $${producto.precio}</p>
-              <p><strong>Stock en esta sucursal:</strong> ${producto.cantidad}</p>
+              <p><strong>Stock en esta sucursal:</strong> ${producto.total_stock}</p>
               <button onclick="agregarAlCarrito(${producto.id_producto})">Agregar al carrito</button>
             </div>
           `;
