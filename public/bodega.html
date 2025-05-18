@@ -9,6 +9,34 @@
   <link href="https://fonts.googleapis.com/css2?family=Cal+Sans&display=swap" rel="stylesheet">
 </head>
 <body class="body">
+  <nav class="navbar navbar-expand-lg navbar-dark gradient-navbar">
+  <div class="container-fluid p-0">
+    <a href="index.html" class="navbar-brand d-flex align-items-center me-3">
+      <img src="img/Logo-ferremas-sinfondo.png" alt="Logo Ferremas" class="img_logo">
+      <h3 class="title_ferremas mb-0 ms-2">Ferremas</h3>
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+            data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+            aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    
+    <h6 id="nombreusuario">Nombre de Usuario</h6>
+    
+    <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
+      <ul class="navbar-nav mb-2 mb-lg-0 d-flex align-items-center">
+        <li class="nav-item"><a class="nav-link" href="#productos">Nuestros productos</a></li>
+        <li class="nav-item"><a class="nav-link" href="carrito.html">Carrito</a></li>
+      </ul>
+
+      <form class="d-flex" role="search">
+        <input class="search" type="search" placeholder="¿Qué producto buscas?" aria-label="Search">
+        <button class="btn-search" type="submit">Buscar</button>
+      </form>
+    </div>
+    <button onclick="cerrarSesion()" class="btn-search">Cerrar sesión</button>
+  </div>
+</nav>
 
   <div class="container py-4">
     <h1 class="text-center">Gestión de inventario</h1>

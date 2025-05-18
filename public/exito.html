@@ -14,7 +14,6 @@
     <div class="card mt-4 p-4 mx-auto" style="max-width: 500px;">
       <h5 class="card-title">Detalles del pedido</h5>
       <ul class="list-group list-group-flush text-start" id="info-pedido">
-        <!-- Aquí van los datos del pedido -->
       </ul>
     </div>
 
@@ -40,7 +39,6 @@
         info.appendChild(li);
       });
 
-      // Limpia sessionStorage si ya no quieres guardarlo
       sessionStorage.removeItem('pedido');
     } else {
       document.getElementById('info-pedido').innerHTML = '<li class="list-group-item text-danger">No se encontraron datos del pedido.</li>';

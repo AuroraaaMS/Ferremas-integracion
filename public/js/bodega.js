@@ -145,3 +145,7 @@ document.addEventListener("DOMContentLoaded", () => {
   selectSucursal.value = "1";            
   cargarProductos("1");                  
 });
+
+function cerrarSesion() {
+    fetch('/logout').then(() => window.location.href = '/login.html');
+  }

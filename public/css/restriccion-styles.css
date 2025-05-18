@@ -1,0 +1,80 @@
+html, body{
+  height: 100%;
+  margin: 0;
+  font-family: 'Cal Sans', sans-serif;
+}
+
+*{
+    font-family: 'Cal Sans', sans-serif;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: #a7cad6;
+}
+
+.container {
+  text-align: center;
+}
+
+h2 {
+  margin-bottom: 5%;
+  font-size: 2rem;
+  color: #333;
+}
+
+.btn-search {
+  position: relative;
+  overflow: hidden;
+  background-color: #0056b3;
+  border-radius: 3rem;
+  color: #ffffff;
+  box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.2); 
+  border: none;
+  padding: 10px 20px;
+  width: auto;
+  height: auto;
+  margin-left: 1rem;
+  text-align: center;
+  font-size: 1rem;
+  display: inline-block;
+}
+
+.btn-search::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -75%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    120deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.4) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  transform: skewX(-25deg);
+}
+
+.btn-search:hover::before {
+  animation: shine 0.8s ease-in-out forwards;
+}
+
+@keyframes shine {
+  0% {
+    left: -75%;
+  }
+  100% {
+    left: 125%;
+  }
+}
+
+.dinogif {
+  height: 25rem; 
+  width: auto;
+  display: block;
+  margin: 0 auto;
+}

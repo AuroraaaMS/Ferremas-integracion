@@ -3,7 +3,6 @@ body {
   background-color: rgb(199, 228, 255);
   color: rgb(14, 34, 74);
   overflow-x: hidden;
-  padding: 2rem;
 }
 
 h1, h2 {
@@ -182,4 +181,37 @@ button.btn-primary:hover {
 
 .form-select{
   width: 15rem;
+}
+
+.navbar {
+  background: linear-gradient(90deg, #3d5174, #75a4f5);
+  color: #ffffff;
+  height: 4.5rem;
+  justify-content: space-between;
+  align-items: center; 
+  padding: 0.5% 1%;
+  width: 100%;
+}
+
+.navbar h6#nombreusuario {
+  margin-left: 20px; 
+  padding: 6px; 
+  display: flex;
+  align-items: center; 
+  margin-top: 0.8rem;
+  font-size: 1.1rem; 
+}
+
+select {
+  margin-left: 20px; 
+}
+
+.nav-link {
+  white-space: nowrap;
+}
+
+.img_logo {
+  width: 4rem;
+  height: auto;
+  display: block;
 }
