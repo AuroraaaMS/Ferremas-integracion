@@ -83,21 +83,25 @@
 
 
           <h4>Opciones de pago</h4>
-          <div class="mb-3">
-            <label class="form-label">Seleccione su método de pago</label>
-            <div class="form-check">
-              <input class="form-check-input" type="radio" name="pago" id="debito" value="debito" checked>
-              <label class="form-check-label" for="debito">Débito</label>
-            </div>
-            <div class="form-check">
-              <input class="form-check-input" type="radio" name="pago" id="credito" value="credito">
-              <label class="form-check-label" for="credito">Crédito</label>
-            </div>
-            <div class="form-check">
-              <input class="form-check-input" type="radio" name="pago" id="transferencia" value="transferencia">
-              <label class="form-check-label" for="transferencia">Transferencia</label>
-            </div>
-          </div>
+      <div class="mb-3">
+  <label class="form-label">Seleccione su método de pago</label>
+  
+  <div class="form-check">
+    <input class="form-check-input" type="radio" name="metodo_pago" id="pago-debito" value="Débito" checked>
+    <label class="form-check-label" for="pago-debito">Débito</label>
+  </div>
+
+  <div class="form-check">
+    <input class="form-check-input" type="radio" name="metodo_pago" id="pago-credito" value="Crédito">
+    <label class="form-check-label" for="pago-credito">Crédito</label>
+  </div>
+
+  <div class="form-check">
+    <input class="form-check-input" type="radio" name="metodo_pago" id="pago-transferencia" value="Transferencia">
+    <label class="form-check-label" for="pago-transferencia">Transferencia</label>
+  </div>
+</div>
+
 
           <button type="button" class="btn btn-success w-100" id="btn-pagar">Finalizar y pagar con Stripe</button>
         </form>
@@ -106,46 +110,5 @@
   </div>
 
   <script src="/js/carrito.js"></script>
-  <script>
-    document.getElementById('btn-pagar').addEventListener('click', async () => {
-      try {
-        const metodo_entrega = document.getElementById('retiro').value === 'domicilio' ? 'domicilio' : 'retiro';
-        const direccion = document.getElementById('direccion').value || 'Retiro en tienda';
-        const tipo_documento = 'boleta';
-
-        sessionStorage.setItem('pedido', JSON.stringify({
-          metodo_entrega,
-          direccion_entrega: direccion,
-          tipo_documento
-        }));
-
-        const res = await fetch('/api/carrito');
-        const carrito = await res.json();
-        let total = carrito.reduce((acc, item) => acc + item.total, 0);
-
-              // Si es envío a domicilio agrega 10 lukas
-              if (metodo_entrega === 'domicilio') {
-                total += 10000;
-              }
-
-        const resp = await fetch('/api/crear-pago', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ total })
-        });
-
-        const data = await resp.json();
-
-        if (data.url) {
-          window.location.href = data.url;
-        } else {
-          alert('No se pudo redirigir al pago');
-        }
-      } catch (err) {
-        console.error('Error al procesar el pago:', err);
-        alert('Ocurrió un error al redirigir al pago');
-      }
-    });
-  </script>
 </body>
 </html>

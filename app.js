@@ -21,17 +21,17 @@ app.use(session({
   saveUninitialized: true
 }));
 
-// Middleware para roles
+
 function requireRole(rolEsperado) {
   return (req, res, next) => {
     if (!req.session.usuario || req.session.usuario.rol !== rolEsperado) {
-      return res.status(403).send('Acceso denegado');
+       return res.redirect('/retriccion.html');
     }
     next();
   };
 }
 
-// Rutas protegidas por roles
+
 app.get('/index.html', requireRole(1), (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
@@ -332,7 +332,7 @@ app.post('/api/pedido/crear', (req, res) => {
 
   connection.query(obtenerCarrito, [idUsuario], (err, resultados) => {
     if (err || resultados.length === 0) {
-      console.error('❌ Error al obtener carrito:', err);
+      console.error(' Error al obtener carrito:', err);
       return res.status(500).send('Error al obtener carrito');
     }
 
@@ -347,7 +347,7 @@ app.post('/api/pedido/crear', (req, res) => {
 
     connection.query(obtenerItems, [idCarrito], (err2, items) => {
       if (err2 || items.length === 0) {
-        console.error('❌ Error al obtener items del carrito:', err2);
+        console.error(' Error al obtener items del carrito:', err2);
         return res.status(400).send('El carrito está vacío');
       }
 
@@ -360,7 +360,7 @@ app.post('/api/pedido/crear', (req, res) => {
 
       connection.query(crearPedido, [idUsuario, metodo_entrega, direccion_entrega, tipo_documento, total], (err3, resultPedido) => {
         if (err3) {
-          console.error('❌ Error al insertar pedido:', err3);
+          console.error(' Error al insertar pedido:', err3);
           return res.status(500).send('Error al crear el pedido');
         }
 
@@ -387,6 +387,42 @@ app.post('/api/pedido/crear', (req, res) => {
     });
   });
 });
+
+
+app.post('/api/pedido', (req, res) => {
+  const {
+    id_usuario,
+    fecha_pedido,
+    metodo_entrega,
+    direccion_entrega,
+    tipo_documento,
+    metodo_pago,
+    total
+  } = req.body;
+
+  if (!id_usuario || !fecha_pedido || !metodo_entrega || !direccion_entrega || !tipo_documento || !total) {
+    return res.status(400).json({ error: 'Faltan campos obligatorios' });
+  }
+
+  const estado = 'Pendiente'; 
+
+  const sql = `
+    INSERT INTO Pedido (
+      id_usuario, fecha_pedido, metodo_entrega,
+      direccion_entrega, tipo_documento, estado, total
+    ) VALUES (?, ?, ?, ?, ?, ?, ?)
+  `;
+
+  connection.query(sql, [id_usuario, fecha_pedido, metodo_entrega, direccion_entrega, tipo_documento, estado, total], (err, result) => {
+    if (err) {
+      console.error('Error al insertar pedido:', err);
+      return res.status(500).json({ error: 'Error del servidor al guardar el pedido' });
+    }
+
+    res.status(201).json({ mensaje: 'Pedido guardado correctamente', id_pedido: result.insertId });
+  });
+});
+
 
 
 

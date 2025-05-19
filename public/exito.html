@@ -20,29 +20,8 @@
     <a href="index.html" class="btn btn-primary mt-4">Volver a comprar</a>
   </div>
 
-  <script>
-    const pedido = JSON.parse(sessionStorage.getItem('pedido'));
-
-    if (pedido) {
-      const info = document.getElementById('info-pedido');
-
-      const datos = [
-        { label: 'Método de entrega', value: pedido.metodo_entrega === 'tienda' ? 'Retiro en tienda' : 'Despacho a domicilio' },
-        { label: 'Dirección', value: pedido.direccion_entrega },
-        { label: 'Tipo de documento', value: pedido.tipo_documento }
-      ];
-
-      datos.forEach(d => {
-        const li = document.createElement('li');
-        li.classList.add('list-group-item');
-        li.innerHTML = `<strong>${d.label}:</strong> ${d.value}`;
-        info.appendChild(li);
-      });
-
-      sessionStorage.removeItem('pedido');
-    } else {
-      document.getElementById('info-pedido').innerHTML = '<li class="list-group-item text-danger">No se encontraron datos del pedido.</li>';
-    }
+  <script src="/js/exito.js">
+    
   </script>
 </body>
 </html>

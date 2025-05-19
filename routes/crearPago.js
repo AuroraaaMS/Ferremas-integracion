@@ -32,7 +32,7 @@ router.post('/crear-pago', async (req, res) => {
 
     res.json({ url: session.url });
   } catch (error) {
-    console.error('❌ Error al crear sesión de pago:', error);
+    console.error(' Error al crear sesión de pago:', error);
     res.status(500).json({ error: error.message });
   }
 });
