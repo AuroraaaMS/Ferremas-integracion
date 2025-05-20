@@ -1,14 +1,14 @@
-require('dotenv').config(); // Stripe
+// require('dotenv').config(); 
 
 const express = require('express');
 const path = require('path');
-const bodyParser = require('body-parser');
+  const bodyParser = require('body-parser');
 const session = require('express-session');
 const connection = require('./bd');
-const crearPago = require('./routes/crearPago'); // Stripe
+const crearPago = require('./routes/crearPago'); 
 
 const app = express();
-
+  
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(express.json());
@@ -32,6 +32,12 @@ function requireRole(rolEsperado) {
 }
 
 
+app.get('/exito.html', requireRole(1), (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'exito.html'));
+});
+app.get('/cancelado.html', requireRole(1), (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'cancelado.html'));
+});
 app.get('/index.html', requireRole(1), (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
@@ -89,7 +95,6 @@ req.session.save(err => {
 });
 
 
-// Redireccionar a login por defecto
 app.get('/', (req, res) => {
   res.redirect('/login.html');
 });
@@ -109,7 +114,7 @@ app.get('/api/perfil', (req, res) => {
   res.status(200).json({ nombre, id });
 });
 
-// Logout
+// cerrar sesion
 app.get('/logout', (req, res) => {
   req.session.destroy(() => {
     res.redirect('/login.html');
@@ -155,7 +160,6 @@ app.put('/api/cliente', (req, res) => {
 });
 
 
-// --- CRUD DE PRODUCTOS EN BODEGA (usando `connection`, no `db`) ---
 
 // Obtener productos de bodega
 app.get('/api/productos/bodega/:id_sucursal', (req, res) => {

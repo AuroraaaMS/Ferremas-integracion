@@ -26,7 +26,7 @@
       </button>
       <h5 id="nombreusuario" ></h5>
       <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
-        <ul class="navbar-nav mb-2 mb-lg-0 d-flex align-items-center">
+        <!-- <ul class="navbar-nav mb-2 mb-lg-0 d-flex align-items-center">
           <li class="nav-item"><a class="nav-link" href="#">Nuestros productos</a></li>
           <li class="nav-item"><a class="nav-link" href="#">Carrito</a></li>
         </ul>
@@ -34,9 +34,8 @@
         <form class="d-flex" role="search">
           <input class="search" type="search" placeholder="¿Qué producto buscas?" aria-label="Search">
           <button class="btn-search" type="submit">Buscar</button>
-        </form>
+        </form> -->
       </div>
-      <button onclick="cerrarSesion()"  class="btn-search" >Cerrar sesión</button>
     </div>
   </nav>
 
@@ -64,22 +63,21 @@
       <div class="col-md-4">
         <h3>Detalles de envío</h3>
         <form>
-          <div class="mb-3">
-            <label for="retiro" class="form-label">Método de entrega</label>
-            <select class="form-select" id="retiro">
-              <option class="despacho" value="domicilio" selected>Despacho a domicilio $10.000</option>
-              <option value="tienda">Retiro en tienda $0</option>
-          </div>
+           <div class="mb-3">
+    <label for="retiro" class="form-label">Método de entrega</label>
+    <select class="form-select" id="retiro">
+      <option class="despacho" value="domicilio" selected>Despacho a domicilio $10.000</option>
+      <option value="tienda">Retiro en tienda $0</option>
+    </select>
+  </div>
 
-          <!-- Dirección para despacho -->
-          <div class="mb-3" id="direccion-container">
-            <label for="direccion" class="form-label">Dirección (si selecciona despacho)</label>
-            <input type="text" class="form-control" id="direccion" placeholder="Ingrese su dirección">
-          </div>
+  <div class="mb-3" id="direccion-container">
+    <label for="direccion" class="form-label">Dirección (si selecciona despacho)</label>
+    <input type="text" class="form-control" id="direccion" placeholder="Ingrese su dirección">
+  </div>
 
-          <!-- Selector de sucursal -->
-          <div class="mb-3" id="sucursal-container" style="display: none;"></div>
-
+  <div class="mb-3" id="sucursal-container" style="display: none;"></div>
+ <input type="hidden" id="direccion-final" name="direccion_final">
 
 
           <h4>Opciones de pago</h4>

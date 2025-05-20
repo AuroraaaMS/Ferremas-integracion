@@ -62,8 +62,8 @@
               <td>$100</td>
               <td><span class="badge bg-warning">Pendiente</span></td>
               <td>
-                <button class="btn btn-success" onclick="confirmarPago(1234)">Confirmar</button>
-                <button class="btn btn-danger" onclick="rechazarPago(1234)">Rechazar</button>
+                <button class="btn btn-success" >Confirmar</button>
+                <button class="btn btn-danger" >Rechazar</button>
               </td>
             </tr>
             <tr>
@@ -98,7 +98,7 @@
               <td>Martillo</td>
               <td>2</td>
               <td>
-                <button class="btn btn-primary" onclick="registrarEntrega(1234)">Registrar entrega</button>
+                <button class="btn btn-primary">Registrar entrega</button>
               </td>
             </tr>
             <tr>
@@ -117,17 +117,6 @@
   </div>
 
   <script>
-    function confirmarPago(id) {
-      alert('Pago ' + id + ' confirmado.');
-    }
-
-    function rechazarPago(id) {
-      alert('Pago ' + id + ' rechazado.');
-    }
-
-    function registrarEntrega(id) {
-      alert('Entrega del pedido ' + id + ' registrada.');
-    }
   </script>
 
 <script src="assets/script.js"></script>
