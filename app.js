@@ -2,7 +2,7 @@
 
 const express = require('express');
 const path = require('path');
-  const bodyParser = require('body-parser');
+const bodyParser = require('body-parser');
 const session = require('express-session');
 const connection = require('./bd');
 const crearPago = require('./routes/crearPago'); 
@@ -431,4 +431,4 @@ app.post('/api/pedido', (req, res) => {
 
 
 
-app.use(express.static(path.join(__dirname, 'public')));  // ESTE SIEMPRE DEJENLO AL FINAL... SIEMPREE NO LO TOQUEN 
+app.use(express.static(path.join(__dirname, 'public')));  // ESTE SIEMPRE DEJENLO AL FINAL... SIEMPREE! NO LO TOQUEN 
