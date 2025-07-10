@@ -30,14 +30,18 @@ window.onload = function() {
         productos.forEach(producto => {
           const div = document.createElement('div');
           div.innerHTML = `
-            <div class="product-item">
-              <h3>${producto.Nombre}</h3>
-              <p>${producto.descripcion}</p>
-              <p>Marca: ${producto.marca}</p>
-              <p>Precio: $${producto.precio}</p>
-              <p><strong>Stock en esta sucursal:</strong> ${producto.total_stock}</p>
-              <button onclick="agregarAlCarrito(${producto.id_producto})">Agregar al carrito</button>
-            </div>
+         <div class="product-item">
+            <h3>${producto.Nombre}</h3>
+            <p>${producto.descripcion}</p>
+            <p>Marca: ${producto.marca}</p>
+            <p>Precio: $${producto.precio}</p>
+            <p><strong>Stock en esta sucursal:</strong> ${producto.total_stock}</p>
+            ${
+              producto.total_stock === 0
+                ? '<p class="text-danger fw-bold">Producto agotado</p>'
+                : `<button onclick="agregarAlCarrito(${producto.id_producto})" class="btn btn-primary">Agregar al carrito</button>`
+            }
+          </div>
           `;
           contenedor.appendChild(div);
         });

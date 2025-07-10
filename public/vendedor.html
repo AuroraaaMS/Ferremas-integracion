@@ -27,7 +27,13 @@
       </div>
     </nav>
 
-    <div class="px-5">
+    <div class="container px-5 mb-4">
+      <button class="btn btn-primary" onclick="mostrarSeccion('despacho')">Organizar Despacho</button>
+      <button class="btn btn-primary me-2" onclick="mostrarSeccion('productos')">Productos Disponibles</button>
+    </div>
+
+    <!-- Sección Productos Disponibles -->
+    <div id="seccion-productos" style="display:none;">
       <div class="row mb-4">
         <div class="col-12">
           <h2>Productos disponibles</h2>
@@ -36,7 +42,7 @@
           <div class="row row-cols-1 row-cols-md-4 custom-gap">
             <div class="col">
               <div class="card">
-                <img src="producto1.jpg" class="card-img-top" alt="Producto 1">
+                <img src="producto1.jpg" class="card-img-top" alt="Producto 1" />
                 <div class="card-body">
                   <h5 class="card-title">Producto 1</h5>
                   <p class="card-text">Descripción del producto</p>
@@ -44,36 +50,7 @@
                 </div>
               </div>
             </div>
-            <div class="col">
-              <div class="card">
-                <img src="producto2.jpg" class="card-img-top" alt="Producto 2">
-                <div class="card-body">
-                  <h5 class="card-title">Producto 2</h5>
-                  <p class="card-text">Descripción del producto</p>
-                  <p><strong>Disponible:</strong> 15 unidades</p>
-                </div>
-              </div>
-            </div>
-            <div class="col">
-              <div class="card">
-                <img src="producto3.jpg" class="card-img-top" alt="Producto 3">
-                <div class="card-body">
-                  <h5 class="card-title">Producto 3</h5>
-                  <p class="card-text">Descripción del producto</p>
-                  <p><strong>Disponible:</strong> 30 unidades</p>
-                </div>
-              </div>
-            </div>
-            <div class="col">
-              <div class="card">
-                <img src="producto4.jpg" class="card-img-top" alt="Producto 4">
-                <div class="card-body">
-                  <h5 class="card-title">Producto 4</h5>
-                  <p class="card-text">Descripción del producto</p>
-                  <p><strong>Disponible:</strong> 10 unidades</p>
-                </div>
-              </div>
-            </div>
+            <!-- Más productos -->
           </div>
         </div>
       </div>
@@ -97,92 +74,29 @@
                 <td>100</td>
                 <td><button class="btn btn-success">Enviar a Bodeguero</button></td>
               </tr>
-              <tr>
-                <td>Producto 2</td>
-                <td>50</td>
-                <td><button class="btn btn-success">Enviar a Bodeguero</button></td>
-              </tr>
-              <tr>
-                <td>Producto 3</td>
-                <td>75</td>
-                <td><button class="btn btn-success">Enviar a Bodeguero</button></td>
-              </tr>
+              <!-- Más filas -->
             </tbody>
           </table>
         </div>
       </div>
+    </div>
 
-      <div class="row mb-4">
-        <div class="col-12">
-          <h2>Aprobar o Rechazar Pedidos</h2>
-        </div>
-        <div class="col-12">
-          <table class="table table-bordered">
-            <thead>
-              <tr>
-                <th scope="col">ID Pedido</th>
-                <th scope="col">Cliente</th>
-                <th scope="col">Producto</th>
-                <th scope="col">Cantidad</th>
-                <th scope="col">Acción</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>#12345</td>
-                <td>Juan Pérez</td>
-                <td>Producto 1</td>
-                <td>5</td>
-                <td>
-                  <button class="btn btn-success">Aprobar</button>
-                  <button class="btn btn-danger">Rechazar</button>
-                </td>
-              </tr>
-              <tr>
-                <td>#12346</td>
-                <td>Maria López</td>
-                <td>Producto 2</td>
-                <td>3</td>
-                <td>
-                  <button class="btn btn-success">Aprobar</button>
-                  <button class="btn btn-danger">Rechazar</button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
+    <!-- Sección Organizar Despacho (visible al cargar) -->
+    <div id="seccion-despacho">
       <div class="row mb-4">
         <div class="col-12">
           <h2>Organizar Despacho a Clientes</h2>
-        </div>
-        <div class="col-12">
-          <table class="table table-bordered">
+          <table class="table table-bordered" id="tablaPedidos">
             <thead>
               <tr>
-                <th scope="col">ID Pedido</th>
-                <th scope="col">Cliente</th>
-                <th scope="col">Producto</th>
-                <th scope="col">Cantidad</th>
-                <th scope="col">Acción</th>
+                <th>ID Pedido</th>
+                <th>Cliente</th>
+                <th>Estado</th>
+                <th>Acción</th>
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>#12345</td>
-                <td>Juan Pérez</td>
-                <td>Producto 1</td>
-                <td>5</td>
-                <td><button class="btn btn-primary">Organizar Despacho</button></td>
-              </tr>
-              <tr>
-                <td>#12346</td>
-                <td>Maria López</td>
-                <td>Producto 2</td>
-                <td>3</td>
-                <td><button class="btn btn-primary">Organizar Despacho</button></td>
-              </tr>
+              <!-- Se llenará con JS -->
             </tbody>
           </table>
         </div>

@@ -325,7 +325,7 @@ app.delete('/api/carrito/item/:id_item', (req, res) => {
     res.status(200).send('Ítem eliminado del carrito');
   });
 });
-//////////////para pedido 
+
 app.post('/api/pedido/crear', (req, res) => {
   const idUsuario = req.session.usuario?.id;
   if (!idUsuario) return res.status(401).send('No autenticado');
@@ -426,6 +426,43 @@ app.post('/api/pedido', (req, res) => {
     res.status(201).json({ mensaje: 'Pedido guardado correctamente', id_pedido: result.insertId });
   });
 });
+
+
+// Asumiendo tienes configurado el connection MySQL (mysql2 o mysql)
+app.get('/api/lista-pedidos', (req, res) => {
+  const sql = `
+    SELECT p.id_pedido, u.nombre AS cliente, p.estado
+    FROM Pedido p
+    JOIN Usuario u ON p.id_usuario = u.id_usuario
+    ORDER BY p.fecha_pedido DESC
+  `;
+  
+  connection.query(sql, (error, results) => {
+    if (error) {
+      console.error('Error al obtener pedidos:', error);
+      return res.status(500).json({ error: 'Error en la base de datos' });
+    }
+    res.json(results);
+  });
+});
+
+app.put('/api/pedidos/:id/estado', (req, res) => {
+  const idPedido = req.params.id;
+  const nuevoEstado = req.body.nuevoEstado;
+
+  const sql = 'UPDATE Pedido SET estado = ? WHERE id_pedido = ?';
+  connection.query(sql, [nuevoEstado, idPedido], (error, results) => {
+    if (error) {
+      console.error('Error al actualizar estado:', error);
+      return res.status(500).json({ error: 'Error al actualizar estado' });
+    }
+    res.json({ mensaje: 'Estado actualizado correctamente' });
+  });
+});
+
+
+
+
 
 
 
