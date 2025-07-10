@@ -481,6 +481,9 @@ app.get('/api/mis-pedidos', (req, res) => {
     res.json(results); 
   });
 });
+const verificarStock = require('./routes/verificarStock');
+app.use('/api', verificarStock);
+
 
 
 
