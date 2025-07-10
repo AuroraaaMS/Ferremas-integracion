@@ -27,14 +27,10 @@
       <span class="navbar-toggler-icon"></span>
     </button>
 
-    <!-- Nombre de usuario -->
     <h6 id="nombreusuario">Nombre de Usuario</h6>
 
-    <!-- Select de sucursal -->
     <select id="sucursalSelect" onchange="mostrarProductosPorSucursal()">
-      <!--<option value="norte">Sucursal Norte</option>
-      <option value="centro">Sucursal Centro</option>
-      <option value="sur">Sucursal Sur</option>-->
+
     </select>
     
     <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
@@ -42,17 +38,24 @@
         <li class="nav-item"><a class="nav-link" href="#productos">Nuestros productos</a></li>
         <li class="nav-item"><a class="nav-link" href="carrito.html">Carrito</a></li>
       </ul>
-
-      <!--<form class="d-flex" role="search">
-        <input class="search" type="search" placeholder="¿Qué producto buscas?" aria-label="Search">
-        <button class="btn-search" type="submit">Buscar</button>
-      </form>-->
     </div>
-    <button onclick="cerrarSesion()" class="btn-search">Cerrar sesión</button>
+    <button onclick="mostrarSeccion('seccion-mis-pedidos')" class="btn btn-success">Mis Pedidos</button>
+
+    <button onclick="cerrarSesion()"  class="btn-search">Cerrar sesión</button>
   </div>
 </nav>
+<!-- <button onclick="mostrarSeccion('seccion-productos')">Ver Productos</button> -->
 
-<div id="productos" class="product-grid"></div>  
+
+
+<div id="seccion-productos" class="product-grid">
+</div>
+
+<div id="seccion-mis-pedidos" style="display:none;">
+  <h3>Mis Pedidos</h3>
+  <div id="misPedidos" class="bg-light p-3 rounded"></div>
+</div>
+
 
 
 

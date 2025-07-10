@@ -336,14 +336,14 @@ app.post('/api/pedido/crear', (req, res) => {
 
   connection.query(obtenerCarrito, [idUsuario], (err, resultados) => {
     if (err || resultados.length === 0) {
-      console.error(' Error al obtener carrito:', err);
+      console.error('Error al obtener carrito:', err);
       return res.status(500).send('Error al obtener carrito');
     }
 
     const idCarrito = resultados[0].id_carrito;
 
     const obtenerItems = `
-      SELECT ci.id_producto, ci.cantidad, p.precio
+      SELECT p.Nombre, ci.cantidad, p.precio
       FROM Carrito_item ci
       JOIN Producto p ON ci.id_producto = p.id_producto
       WHERE ci.id_carrito = ?
@@ -351,46 +351,39 @@ app.post('/api/pedido/crear', (req, res) => {
 
     connection.query(obtenerItems, [idCarrito], (err2, items) => {
       if (err2 || items.length === 0) {
-        console.error(' Error al obtener items del carrito:', err2);
+        console.error('Error al obtener items del carrito:', err2);
         return res.status(400).send('El carrito está vacío');
       }
-
-      const total = items.reduce((acc, item) => acc + item.precio * item.cantidad, 0);
+      let productosTexto = '';
+      let total = 0;
+      items.forEach((item, index) => {
+        const subtotal = item.cantidad * item.precio;
+        total += subtotal;
+        productosTexto += `${item.Nombre} ${item.cantidad} ${subtotal}`;
+        if (index < items.length -1) productosTexto += ' - ';
+      });
+      productosTexto += ` - total ${total}`;
 
       const crearPedido = `
-        INSERT INTO Pedido (fecha_pedido, id_usuario, metodo_entrega, direccion_entrega, tipo_documento, estado, total)
-        VALUES (NOW(), ?, ?, ?, ?, 'Pendiente', ?)
+        INSERT INTO Pedido (fecha_pedido, id_usuario, metodo_entrega, direccion_entrega, tipo_documento, productos_precios, estado, total)
+        VALUES (NOW(), ?, ?, ?, ?, ?, 'Pendiente', ?)
       `;
 
-      connection.query(crearPedido, [idUsuario, metodo_entrega, direccion_entrega, tipo_documento, total], (err3, resultPedido) => {
+      connection.query(crearPedido, [idUsuario, metodo_entrega, direccion_entrega, tipo_documento, productosTexto, total], (err3, resultPedido) => {
         if (err3) {
-          console.error(' Error al insertar pedido:', err3);
+          console.error('Error al insertar pedido:', err3);
           return res.status(500).send('Error al crear el pedido');
         }
 
-        const idPedido = resultPedido.insertId;
-
-        const detalles = items.map(item => [idPedido, item.id_producto, item.cantidad, item.precio]);
-
-        const insertarDetalles = `
-          INSERT INTO Pedido_Detalle (id_pedido, id_producto, cantidad, precio_unitario)
-          VALUES ?
-        `;
-
-        connection.query(insertarDetalles, [detalles], (err4) => {
-          if (err4) {
-            console.error(' Error al insertar detalles:', err4);
-            return res.status(500).send('Error al crear detalles del pedido');
-          }
-
-          connection.query(`DELETE FROM Carrito_item WHERE id_carrito = ?`, [idCarrito], () => {
-            res.status(200).json({ mensaje: 'Pedido creado exitosamente', id_pedido: idPedido });
-          });
+        // Vaciar carrito
+        connection.query(`DELETE FROM Carrito_item WHERE id_carrito = ?`, [idCarrito], () => {
+          res.status(200).json({ mensaje: 'Pedido creado exitosamente', id_pedido: resultPedido.insertId });
         });
       });
     });
   });
 });
+
 
 
 app.post('/api/pedido', (req, res) => {
@@ -431,9 +424,14 @@ app.post('/api/pedido', (req, res) => {
 // Asumiendo tienes configurado el connection MySQL (mysql2 o mysql)
 app.get('/api/lista-pedidos', (req, res) => {
   const sql = `
-    SELECT p.id_pedido, u.nombre AS cliente, p.estado
-    FROM Pedido p
-    JOIN Usuario u ON p.id_usuario = u.id_usuario
+   SELECT
+  p.id_pedido,
+  u.nombre AS cliente,
+  p.productos_precios,
+  p.estado
+FROM Pedido p
+JOIN Usuario u ON p.id_usuario = u.id_usuario
+
     ORDER BY p.fecha_pedido DESC
   `;
   
@@ -457,6 +455,30 @@ app.put('/api/pedidos/:id/estado', (req, res) => {
       return res.status(500).json({ error: 'Error al actualizar estado' });
     }
     res.json({ mensaje: 'Estado actualizado correctamente' });
+  });
+});
+
+
+app.get('/api/mis-pedidos', (req, res) => {
+  if (!req.session.usuario) {
+    return res.status(401).json({ error: 'No autenticado' });
+  }
+
+  const idUsuario = req.session.usuario.id;
+
+  const sql = `
+    SELECT id_pedido, fecha_pedido, metodo_entrega, direccion_entrega, tipo_documento, estado, total
+    FROM Pedido
+    WHERE id_usuario = ?
+  `;
+
+  connection.query(sql, [idUsuario], (err, results) => {
+    if (err) {
+      console.error('Error al obtener pedidos del usuario:', err);
+      return res.status(500).json({ error: 'Error interno del servidor' });
+    }
+
+    res.json(results); 
   });
 });
 

@@ -5,6 +5,7 @@ window.onload = function() {
 
   cargarSucursales(); 
   informacionUsuario(); 
+  cargarMisPedidos();
 };
 
   function agregarAlCarrito(id_producto) {
@@ -25,7 +26,7 @@ window.onload = function() {
     fetch(`/api/productos/bodega/${idSucursal}`)
       .then(response => response.json())
       .then(productos => {
-        const contenedor = document.getElementById('productos');
+        const contenedor = document.getElementById('seccion-productos');
         contenedor.innerHTML = '';
         productos.forEach(producto => {
           const div = document.createElement('div');
@@ -90,10 +91,68 @@ let idUsuarioGlobal = null;
     });
 }
 
+function mostrarSeccion(nombre) {
+  const secciones = ['seccion-productos', 'seccion-mis-pedidos'];
+  secciones.forEach(id => {
+    const elemento = document.getElementById(id);
+    if (id === nombre) {
+      if (id === 'seccion-productos') {
+        elemento.style.display = 'grid';
+      } else {
+        elemento.style.display = 'block';
+      }
+    } else {
+      elemento.style.display = 'none';
+    }
+  });
+}
+
+
+
+
+
+
+
+
+  function cargarMisPedidos() {
+  fetch('/api/mis-pedidos')
+
+    .then(res => res.json())
+    .then(pedidos => {
+      const contenedor = document.getElementById('misPedidos');
+      contenedor.innerHTML = '';
+
+      if (pedidos.length === 0) {
+        contenedor.innerHTML = '<p>No tienes pedidos registrados.</p>';
+        return;
+      }
+
+      pedidos.forEach(p => {
+        const div = document.createElement('div');
+        div.className = 'pedido-box';
+        div.innerHTML = `
+          <h5>Pedido #${p.id_pedido}</h5>
+          <p><strong>Fecha:</strong> ${p.fecha_pedido}</p>
+          <p><strong>Entrega:</strong> ${p.metodo_entrega}</p>
+          <p><strong>Dirección:</strong> ${p.direccion_entrega}</p>
+          <p><strong>Documento:</strong> ${p.tipo_documento}</p>
+          <p><strong>Total:</strong> $${p.total}</p>
+          <p><strong>Estado:</strong> <span class="badge bg-info">${p.estado}</span></p>
+          <hr>
+        `;
+        contenedor.appendChild(div);
+      });
+    })
+    .catch(err => {
+      console.error('Error al cargar mis pedidos:', err);
+    });
+}
 
 function cerrarSesion() {
     fetch('/logout').then(() => window.location.href = '/login.html');
   }
+
+
 
 
 

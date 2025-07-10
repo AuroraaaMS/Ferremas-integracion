@@ -55,24 +55,14 @@ function insertarPedidoDesdeStorage() {
     return;
   }
 
-  const id_usuario = pedidoGuardado.id_usuario;
-  const fecha_pedido = pedidoGuardado.fecha_pedido;
-  const metodo_entrega = pedidoGuardado.metodo_entrega;
-  const direccion_entrega = pedidoGuardado.direccion_entrega;
-  const tipo_documento = pedidoGuardado.tipo_documento;
-  const total = pedidoGuardado.total;
-
-  fetch('/api/pedido', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      id_usuario,
-      fecha_pedido,
-      metodo_entrega,
-      direccion_entrega,
-      tipo_documento,
-      total
-    })
+  fetch('/api/pedido/crear', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    metodo_entrega: pedidoGuardado.metodo_entrega,
+    direccion_entrega: pedidoGuardado.direccion_entrega,
+    tipo_documento: pedidoGuardado.tipo_documento
+  })
   })
   .then(response => response.json())
   .then(data => {

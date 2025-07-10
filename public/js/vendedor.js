@@ -17,18 +17,20 @@ function cargarPedidos() {
 
       pedidos.forEach(pedido => {
         const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td>${pedido.id_pedido}</td>
-          <td>${pedido.cliente}</td>
-          <td>${pedido.estado}</td>
-          <td>
-            <select class="form-select estado-select" data-id="${pedido.id_pedido}">
-              <option value="Pendiente" ${pedido.estado === 'Pendiente' ? 'selected' : ''}>Pendiente</option>
-              <option value="Enviado" ${pedido.estado === 'Enviado' ? 'selected' : ''}>Enviado</option>
-              <option value="Cancelado" ${pedido.estado === 'Cancelado' ? 'selected' : ''}>Cancelado</option>
-            </select>
-          </td>
-        `;
+  tr.innerHTML = `
+  <td>${pedido.id_pedido}</td>
+  <td>${pedido.cliente}</td>
+  <td class="productos-precios">${pedido.productos_precios}</td>
+  <td>${pedido.estado}</td>
+  <td>
+    <select class="form-select estado-select" data-id="${pedido.id_pedido}">
+      <option value="Pendiente" ${pedido.estado === 'Pendiente' ? 'selected' : ''}>Pendiente</option>
+      <option value="Enviado" ${pedido.estado === 'Enviado' ? 'selected' : ''}>Enviado</option>
+      <option value="Cancelado" ${pedido.estado === 'Cancelado' ? 'selected' : ''}>Cancelado</option>
+    </select>
+  </td>
+`;
+
         tbody.appendChild(tr);
       });
 
